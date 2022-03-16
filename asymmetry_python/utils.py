@@ -23,5 +23,6 @@ def apply_mask(input_image, mask):
     return masked_image_df.values
 
 def mean_and_stdev(masked_image_values):
-    print(np.mean(masked_image_values))
-    print(np.std(masked_image_values))
+    mean = np.mean(masked_image_values)
+    st_dev = np.std(masked_image_values)
+    return mean, st_dev
