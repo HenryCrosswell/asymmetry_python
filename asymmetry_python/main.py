@@ -20,27 +20,3 @@ for file_number, file_path in enumerate(listdir(folder_path)):
     axs[file_number].hist(values_of_interest)
 
 plt.show()
-
-
-
-#2D array required, need to create a new array with the mask, instead of removing the false values you need to make sure they are not calculated.
-
-
-
-
-
-
-
-#2D array required, need to create a new array with the mask, instead of removing the false values you need to make sure they are not calculated.
-
-
-
-
-
-
-
-
-
-
-
-
