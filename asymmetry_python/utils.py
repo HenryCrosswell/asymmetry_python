@@ -17,6 +17,7 @@ def image_mask(input_image):
             tf_array[i,first_non_zero_index:] = True
     return tf_array
 
+#replaced functionality with boolean indexing - input_image[mask]
 def apply_mask(input_image, mask):
     df = pd.DataFrame({'booleans': mask.flatten(), 'values': input_image.flatten()}, columns=['booleans', 'values'])
     masked_image_df = df.loc[df['booleans'] == True, 'values']
