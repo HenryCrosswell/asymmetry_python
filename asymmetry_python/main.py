@@ -1,55 +1,48 @@
-from utils import read_image, apply_mask, image_mask, mean_and_stdev
-from os import listdir
+from plotting import plot3Dp_values, plot3Dmedians
+from tkinter import filedialog
+from loading import read_and_sort_files
+from processing import scan_image_and_process, downscale
 import matplotlib.pyplot as plt
 import numpy as np
-import seaborn as sns
-folder_path = "C:\\Users\\henry\\OneDrive - University College London\\Project Work\\Image Analysis\\Images\\Cell shaver\\pixel_distance_python\\"
 
 
+folder_path = "C:\\Users\\henry\\OneDrive - University College London\\Project Work\\Image Analysis\\Images\\Cell shaver\\adjusted_pixel_distance_python\\"
+#folder_path = "C:\\Users\\henry\\OneDrive - University College London\\Project Work\\Image Analysis\\Images\\Cell shaver\\test\\"
+#folder_path = filedialog.askdirectory()
 
-fig, axs = plt.subplots(12,2, sharex=True, sharey=True, figsize= (10,9))
-fig.suptitle('Histograms')
-fig.supxlabel('Pixel distance')
-fig.supylabel('Quantity')
+wt_files, mt_files = read_and_sort_files(folder_path)
+median_diff_array, p_value_mask_array, mt_median_image, wt_median_image, high_median_mt, high_median_wt = scan_image_and_process(wt_files, mt_files)
 
-plt.rcParams['figure.constrained_layout.use'] = True
-y_lim = [0,400000]
-x_lim = [10,350]
-equally_spaced_bins = range(x_lim[0], x_lim[1]+25, 25)
-mt_medians = []
-wt_medians = []
-
-
-for file_number, file_path in enumerate(listdir(folder_path)):
-    input_image = read_image(folder_path+file_path)
-    mask = image_mask(input_image)
-    all_nonzero_values = input_image[mask]
-    values_of_interest = all_nonzero_values[all_nonzero_values>10]
-    row_number = file_number%12
-    if file_path[:2] == "WT":
-        axs[row_number, 1].hist(values_of_interest, color= 'green', bins=equally_spaced_bins)
-        axs[row_number, 1].set_ylim(y_lim)
-        axs[row_number, 1].set_xlim(x_lim)
-        axs[row_number, 1].set_title(file_path)
-        axs[row_number, 1].set_xticks([10,50,100,150,200,250,300,350])
-        wt_medians.append(np.median(values_of_interest))
-        continue
-    axs[row_number, 0].set_title(file_path)
-    axs[row_number, 0].hist(values_of_interest, bins=equally_spaced_bins)
-    axs[row_number, 0].set_ylim(y_lim)
-    axs[row_number, 0].set_xlim(x_lim)
-    axs[row_number, 0].set_xticks([10,50,100,150,200,250,300,350])
-    mt_medians.append(np.median(values_of_interest))
+number = 1
+while number != 5:#2
+    if number == 1:
+        variable_file_name = 'testmy_plot_a113_e30.png'
+        med_variable_file_name = 'testmedian_diff_plot_a113_e30.png'
+        azimuth = 113
+        elevation = 30
+    if number == 2:
+        variable_file_name = 'testmy_plot_a54_e40.png'
+        med_variable_file_name = 'testmedian_diff_plot_a54_e40.png'
+        azimuth = 54
+        elevation = 40
+    if number == 3:
+        variable_file_name = 'testmy_plot_a60_e15.png'
+        med_variable_file_name = 'testmedian_diff_plot_a60_e15.png'
+        azimuth = 60
+        elevation = 15
+    if number == 4:
+        variable_file_name = 'testmy_plot_a90_e90.png'
+        med_variable_file_name = 'testmedian_diff_plot_a90_e90.png'
+        azimuth = 90
+        elevation = 90
+    number += 1
 
     
+    plot3Dp_values(median_diff_array, p_value_mask_array, elevation, azimuth)
+    plt.savefig(variable_file_name, dpi = 300, bbox_inches='tight')
 
-
-plt.subplots_adjust(left=0.1, bottom=0.1, right=0.9, top=0.9, wspace=0.4, hspace=0.6)
-plt.show()
-
-fig2, axs2 = plt.subplots()
-axs2.boxplot([wt_medians, mt_medians])
-plt.ylabel("Median")
-axs2.set_xticklabels(["WT medians", "MT medians"]),
-#sns.set_theme()
-plt.show()
+    plot3Dmedians(mt_median_image, wt_median_image, elevation, azimuth)
+    plt.savefig(med_variable_file_name, dpi = 300, bbox_inches='tight')
+    #plt.show()
+    print(number,'- complete')
+print('done')
