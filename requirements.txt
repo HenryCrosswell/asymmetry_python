@@ -6,7 +6,6 @@ coverage
 pypi-publisher
 matplotlib
 numpy
-tkinter
 cmath
 skimage
 scipy
