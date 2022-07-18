@@ -6,6 +6,6 @@ coverage
 pypi-publisher
 matplotlib
 numpy
-skimage
+scikit-image
 scipy
 
