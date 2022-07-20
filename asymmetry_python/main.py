@@ -11,7 +11,7 @@ folder_path = "C:\\Users\\henry\\OneDrive - University College London\\Project W
 #folder_path = filedialog.askdirectory()
 
 wt_files, mt_files = read_and_sort_files(folder_path)
-median_diff_array, p_value_mask_array, mt_median_image, wt_median_image, high_median_mt, high_median_wt = scan_image_and_process(wt_files, mt_files)
+median_diff_array, p_value_mask_array, mt_median_image, wt_median_image = scan_image_and_process(wt_files, mt_files)
 
 number = 1
 while number != 5:#2
