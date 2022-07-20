@@ -49,8 +49,7 @@ def scan_image_and_process(wt_files, mt_files):
     wt_files -- A list of 2D arrays for each WT image
     mt_files -- A list of 2D arrays for each MT image
     """
-    high_median_mt = 0
-    high_median_wt = 0
+
     image_width, image_height = image_dimensions(wt_files)
     mt_median_image = [[nan for x in range(image_width)] for y in range(image_height)]
     wt_median_image = [[nan for x in range(image_width)] for y in range(image_height)]
@@ -88,5 +87,5 @@ def scan_image_and_process(wt_files, mt_files):
             if wt_p_value <= 0.05:
                 p_value_mask_array[current_y_axis][current_x_axis] = '#ED553B'
 
-    return median_diff_array, p_value_mask_array, mt_median_image, wt_median_image, high_median_mt, high_median_wt
+    return median_diff_array, p_value_mask_array, mt_median_image, wt_median_image
 
