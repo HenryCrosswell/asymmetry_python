@@ -17,7 +17,7 @@ def read_and_sort_files(folder_path):
     mt_list = []
     wt_list = []
     for file_path in listdir(folder_path): 
-        input_image = imread(Path(folder_path + file_path)) 
+        input_image = imread(Path(folder_path, file_path))
         if file_path[:2] == "WT":
             wt_list.append(input_image) 
         elif file_path[:3] == "CF+":
