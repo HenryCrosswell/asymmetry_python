@@ -7,13 +7,7 @@ from os import listdir
 import numpy as np
 
 def read_and_sort_files(folder_path):
-    """Categorises the file into mutant or wild-type, ignoring heterozygous genotypes.
-
-    Keyword arguments:
-    folder_path -- the path from which the images will be obtained
-    wt_list -- an empty list for all wild-type images
-    mt_list -- an empty list for all mutant images
-    """    
+    """Categorises the files from a folder into mutant or wild-type, ignoring heterozygous genotypes."""    
     mt_list = []
     wt_list = []
     for file_path in listdir(folder_path): 
@@ -24,7 +18,7 @@ def read_and_sort_files(folder_path):
             continue
         else: 
             mt_list.append(input_image) 
-    return mt_list, wt_list
+    return wt_list, mt_list
 
 def image_dimensions(list_of_files):
     """ Recieves an image array and returns how many rows and columns it contains."""
@@ -34,7 +28,7 @@ def image_dimensions(list_of_files):
     return image_width, image_height
 
 def get_pixel_values_from_image_array(x_axis, y_axis, array_of_images):
-    """At a specific XY coordinate in all image arrays, return a list of pixel values at the coordinate, removes 0 values.
+    """At a specific XY coordinate in all image arrays, return a list of pixel values at the coordinate, if all values are 0, they are removed.
     
     Keyword arguments:
     x_axis -- the inputed x coordinate
