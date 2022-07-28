@@ -42,3 +42,5 @@ def test_var_checked_p_value():
     
     assert mt_p_value < 0.05
     assert wt_p_value > 0.05
+
+    
