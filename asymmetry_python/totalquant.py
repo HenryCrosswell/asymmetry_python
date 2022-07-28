@@ -1,10 +1,17 @@
+""" 
+
+"""
+
+
 from scipy import stats
 from skimage.io import imread
 from pathlib import Path
 from os import listdir
 import numpy as np
+from tkinter import filedialog
 
 def read_and_sort_files_with_names(folder_path):
+    """Categorises the files from a folder into mutant or wild-type, ignoring heterozygous genotypes."""    
     mt_list = []
     wt_list = []
     mt_names = []
@@ -32,17 +39,19 @@ wt_median_list = []
 mt_median_list = []
 
 folder_path = "C:\\Users\\henry\\OneDrive - University College London\\Project Work\\Image Analysis\\Images\\Cell shaver\\adjusted_pixel_distance_python\\"
+#folder_path = filedialog.askdirectory()
 
 mt_list, wt_list, mt_names, wt_names = read_and_sort_files_with_names(folder_path)
 
 for image in wt_list:
     wt_image_non_zero_list = get_all_non_zero_values(image)
-    wt_median = np.mean(wt_image_non_zero_list)
+    wt_median = np.median(wt_image_non_zero_list)
+    
     wt_median_list.append(wt_median)
 
 for image in mt_list:
     mt_image_non_zero_list = get_all_non_zero_values(image)
-    mt_median = np.mean(mt_image_non_zero_list)
+    mt_median = np.median(mt_image_non_zero_list)
     mt_median_list.append(mt_median)
 
 for key in wt_names:
