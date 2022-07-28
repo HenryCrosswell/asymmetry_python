@@ -12,7 +12,7 @@ def test_image_dimensions():
 def test_read_and_sort_files():
     test_folder_path = "C:\\Users\\henry\\OneDrive - University College London\\Coding\\tissue_asymmetry_python\\tests\\data\\"
     #point to test data path instead of th
-    mt_list, wt_list = read_and_sort_files(test_folder_path)
+    wt_list, mt_list = read_and_sort_files(test_folder_path)
     assert len(mt_list) == 2
     assert len(wt_list) == 2
     for im_array in wt_list: 
