@@ -24,18 +24,18 @@ number = 1
 # numbers below are hardcorded angles that I want the plot to be saved at
 while number != 4:
     if number == 1:
-        variable_file_name = 'nonemy_plot_a60_e15.png'
-        med_variable_file_name = 'nonemedian_diff_plot_a60_e15.png'
+        variable_file_name = 'none_my_plot_a60_e15.png'
+        med_variable_file_name = 'none_median_diff_plot_a60_e15.png'
         azimuth = 60
         elevation = 15
     if number == 2:
-        variable_file_name = 'nonemy_plot_a90_e90.png'
-        med_variable_file_name = 'nonemedian_diff_plot_a90_e90.png'
+        variable_file_name = 'none_my_plot_a90_e90.png'
+        med_variable_file_name = 'none_median_diff_plot_a90_e90.png'
         azimuth = 90
         elevation = 90
     if number == 3:
-        variable_file_name = 'noneemy_plot_a0_e0.png'
-        med_variable_file_name = 'nonemedian_diff_plot_a0_e0.png'
+        variable_file_name = 'nonee_my_plot_a0_e0.png'
+        med_variable_file_name = 'none_median_diff_plot_a0_e0.png'
         azimuth = 0
         elevation = 0
     number += 1
