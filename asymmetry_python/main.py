@@ -10,8 +10,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import os
 
-file_save_path = "C:\\Users\\henry\\OneDrive - University College London\\Project Work\\Image Analysis\\Images\\Images_from_python_script\\"
-folder_path = "C:\\Users\\henry\\OneDrive - University College London\\Project Work\\Image Analysis\\Images\\Cell shaver\\adjusted_pixel_distance_python\\"
+file_save_path = "C:\\Users\\alessandro\\OneDrive - University College London\\Project Work\\Image Analysis\\Images\\Images_from_python_script\\"
+folder_path = "C:\\Users\\alessandro\\OneDrive - University College London\\Project Work\\Image Analysis\\Images\\Cell shaver\\adjusted_pixel_distance_python\\"
 #folder_path = "C:\\Users\\henry\\OneDrive - University College London\\Project Work\\Image Analysis\\Images\\Cell shaver\\test\\"
 #folder_path = filedialog.askdirectory()
 #file_save_path = filedialog.askdirectory()
