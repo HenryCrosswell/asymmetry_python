@@ -52,9 +52,9 @@ def plot3Dp_values(median_diff_array, P_value_mask, elevation, azimuth):
     ax.plot_surface(X,Y,Z, rstride=1, cstride=1, facecolors=P_value_mask) #alpha = 0.6)
     ax.view_init(elevation,azimuth)
     ax.dist = 7
-
-    ax.axes.xaxis.set_visible(False)
-    ax.axes.yaxis.set_visible(False)
+    
+    ax.set_xticklabels([])
+    ax.set_yticklabels([])
     ax.set_zlim(-40,40)
     median_proxy = mpl.lines.Line2D([0],[0], linestyle="none", c='#3CAEA3', marker = 'o')
     wt_proxy = mpl.lines.Line2D([0],[0], linestyle="none", c='#F6D55C', marker = 'o')
@@ -90,8 +90,6 @@ def plot3Dmedians(wt_median_image, mt_median_image, elevation, azimuth):
     ax.get_proj = lambda: np.dot(Axes3D.get_proj(ax), np.diag([0.4, 1.0, 0.4, 1]))
     ax.view_init(elevation,azimuth)
 
-    ax.axes.xaxis.set_visible(False)
-    ax.axes.yaxis.set_visible(False)
     ax.set_zlim(0,70)
     wt_proxy = mpl.lines.Line2D([0],[0], linestyle="none", c='#6A76B7', marker = 'o')
     mt_proxy = mpl.lines.Line2D([0],[0], linestyle="none", c='#EDC194', marker = 'o')
