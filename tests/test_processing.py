@@ -21,7 +21,7 @@ def test_scan_image_and_process():
     assert np.all(mt_median_image == 3)
     assert np.all(wt_median_image == 2)
     assert np.all(median_diff_array == 1)
-    assert np.all(p_value_mask_array) == '#3CAEA300'
+    assert np.all(p_value_mask_array) == 'None'
 
 
 def test_var_checked_p_value():
