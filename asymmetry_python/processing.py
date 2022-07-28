@@ -11,7 +11,7 @@ def threshold(list_of_pixel_values):
     sdev = np.std(list_of_pixel_values)
     mean = np.mean(list_of_pixel_values)
     co_of_var = sdev/mean
-    if co_of_var < 1.3:
+    if co_of_var < 1.4:
         return list_of_pixel_values
     else:
         return []
@@ -54,8 +54,8 @@ def scan_image_and_process(wt_files, mt_files):
     mt_median_image = [[nan for x in range(image_width)] for y in range(image_height)]
     wt_median_image = [[nan for x in range(image_width)] for y in range(image_height)]
     median_diff_array = [[nan for x in range(image_width)] for y in range(image_height)]
-    p_value_mask_array = np.array([['#3CAEA300' for x in range(image_width)] for y in range(image_height)], dtype = object)
-    
+    #p_value_mask_array = np.array([['#3CAEA300' for x in range(image_width)] for y in range(image_height)], dtype = object)
+    p_value_mask_array = np.array([['None' for x in range(image_width)] for y in range(image_height)], dtype = object)
     for current_y_axis in range(image_height):
         for current_x_axis in range(image_width):
 
@@ -70,9 +70,7 @@ def scan_image_and_process(wt_files, mt_files):
             median_wt = np.median(wt_image_pixels)
             median_mt = np.median(mt_image_pixels)
             median_diff = median_mt-median_wt
-            if median_diff < -40:
-                median_diff = -40
-            
+
 
             #saves these medians in a 2D array the same coordinate they were retrieved
             mt_median_image[current_y_axis][current_x_axis] = median_mt
@@ -83,9 +81,9 @@ def scan_image_and_process(wt_files, mt_files):
             wt_p_value = var_checked_p_value(wt_image_pixels, mt_image_pixels, 'greater')
             mt_p_value = var_checked_p_value(wt_image_pixels, mt_image_pixels, 'less')
             if mt_p_value <= 0.05:
-                p_value_mask_array[current_y_axis][current_x_axis] = '#F6D55C'
-            if wt_p_value <= 0.05:
                 p_value_mask_array[current_y_axis][current_x_axis] = '#ED553B'
+            if wt_p_value <= 0.05:
+                p_value_mask_array[current_y_axis][current_x_axis] = '#F6D55C'
 
     return median_diff_array, p_value_mask_array, mt_median_image, wt_median_image
 
