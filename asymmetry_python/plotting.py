@@ -11,8 +11,13 @@ import matplotlib as mpl
 from asymmetry_python.processing import threshold
 
 def gaussian_filter(image_array, sigma, truncate):
-    #sigma = standard deviation for Gaussian filter     
-    #truncate filter at this many sigmas
+    """Filters a given array excluding nan values more effectively than the normal gaussian function.
+
+    Keyword arguments:
+    image_array -- the chosen image array that will undergo filtering
+    sigma -- the range at which the filter averages the values
+    truncate -- the decimal places in which the average is cut off at    
+    """
 
     U = np.array(image_array)
     V=U.copy()
@@ -37,23 +42,26 @@ def plot3Dp_values(median_diff_array, P_value_mask, elevation, azimuth):
     image_height = len(median_diff_array)
     image_width = len(median_diff_array[0])
 
-    Z = gaussian_filter(median_diff_array, 2, 4)
+    Z = gaussian_filter(median_diff_array, 4, 4)
 
     fig, ax = plt.subplots(subplot_kw={"projection": "3d"}, figsize=(8,6))
     ax.set(xlim=(0, image_width), ylim=(0, image_height))
     X, Y = np.meshgrid(range(image_width), range(image_height))
     ax.set_aspect('auto')
     ax.get_proj = lambda: np.dot(Axes3D.get_proj(ax), np.diag([0.4, 1.0, 0.4, 1]))
-    ax.plot_surface(X,Y,Z, rstride=1, cstride=1, facecolors=P_value_mask, alpha = 0.6)
+    ax.plot_surface(X,Y,Z, rstride=1, cstride=1, facecolors=P_value_mask) #alpha = 0.6)
     ax.view_init(elevation,azimuth)
     ax.dist = 7
 
+    ax.axes.xaxis.set_visible(False)
+    ax.axes.yaxis.set_visible(False)
+    ax.set_zlim(-40,40)
     median_proxy = mpl.lines.Line2D([0],[0], linestyle="none", c='#3CAEA3', marker = 'o')
-    wt_proxy = mpl.lines.Line2D([0],[0], linestyle="none", c='#ED553B', marker = 'o')
-    mt_proxy = mpl.lines.Line2D([0],[0], linestyle="none", c='#F6D55C', marker = 'o')
+    wt_proxy = mpl.lines.Line2D([0],[0], linestyle="none", c='#F6D55C', marker = 'o')
+    mt_proxy = mpl.lines.Line2D([0],[0], linestyle="none", c='#ED553B', marker = 'o')
     ax.legend([median_proxy, wt_proxy, mt_proxy], ['Median Difference', 'WT significance', 'MT signficance'], numpoints = 1, loc='upper left')
 
-def plot3Dmedians(mt_median_image, wt_median_image, elevation, azimuth):
+def plot3Dmedians(wt_median_image, mt_median_image, elevation, azimuth):
     """Surface plots both results onto an X,Y,Z axis, smooths the image and extends the Y axis to a representitive size.
     
     Keyword arguments:
@@ -64,23 +72,28 @@ def plot3Dmedians(mt_median_image, wt_median_image, elevation, azimuth):
     """
     image_height = len(wt_median_image)
     image_width = len(wt_median_image[0])
-
-    Z = gaussian_filter(mt_median_image, 10, 4)
-    Z1 = gaussian_filter(wt_median_image, 10, 4)
+    plt.rcParams.update({'font.family':'Calibri'})
+    Z = gaussian_filter(wt_median_image, 4, 4)
+    Z1 = gaussian_filter(mt_median_image, 4, 4)
 
     fig, ax = plt.subplots(subplot_kw={"projection": "3d"}, figsize=(8,6))
     ax.set(xlim=(0, image_width), ylim=(0, image_height))
     X, Y = np.meshgrid(range(image_width), range(image_height))
+       
     ax.set_aspect('auto')
-    ax.plot_surface(X, Y, Z,  color='#626FB3', linewidth=0, antialiased=True, alpha = 0.6, rcount=200, ccount=200)
-    ax.get_proj = lambda: np.dot(Axes3D.get_proj(ax), np.diag([0.4, 1.0, 0.4, 1]))
 
-    ax.plot_surface(X, Y, Z1, color='#EDC194', antialiased=True, alpha = 0.6, rcount=200, ccount=200)
+    ax.plot_surface(X, Y, Z, color='#EDC194', antialiased=True, alpha = 0.8, rcount=200, ccount=200)
     ax.get_proj = lambda: np.dot(Axes3D.get_proj(ax), np.diag([0.4, 1.0, 0.4, 1]))
     ax.dist=7
+
+    ax.plot_surface(X, Y, Z1,  color='#6A76B7', linewidth=0, antialiased=True, alpha = 0.8, rcount=200, ccount=200)
+    ax.get_proj = lambda: np.dot(Axes3D.get_proj(ax), np.diag([0.4, 1.0, 0.4, 1]))
     ax.view_init(elevation,azimuth)
 
-    wt_proxy = mpl.lines.Line2D([0],[0], linestyle="none", c='#EDC194', marker = 'o')
-    mt_proxy = mpl.lines.Line2D([0],[0], linestyle="none", c='#626FB3', marker = 'o')
-    ax.legend([wt_proxy, mt_proxy], ['WT significance', 'MT signficance'], numpoints = 1, loc='upper left')
+    ax.axes.xaxis.set_visible(False)
+    ax.axes.yaxis.set_visible(False)
+    ax.set_zlim(0,70)
+    wt_proxy = mpl.lines.Line2D([0],[0], linestyle="none", c='#6A76B7', marker = 'o')
+    mt_proxy = mpl.lines.Line2D([0],[0], linestyle="none", c='#EDC194', marker = 'o')
+    ax.legend([wt_proxy, mt_proxy], ['WT median distance', 'Cre;Fl/Fl median distance'], numpoints = 1, loc='upper left')
 
