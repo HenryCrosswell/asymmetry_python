@@ -1,4 +1,7 @@
 from cgi import test
+from cmath import nan
+from random import randint
+from statistics import median
 import numpy as np
 from asymmetry_python.loading import image_dimensions, read_and_sort_files, get_pixel_values_from_image_array
 from os import listdir
@@ -45,3 +48,4 @@ def test_get_pixel_values_from_image_array():
                 assert all(result) == 1
                 #assert len(result) == 4
             assert all(result) != 0
+
