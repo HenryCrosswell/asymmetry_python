@@ -1,6 +1,8 @@
+from cmath import nan
+from random import randint
 from statistics import median
 import numpy as np
-from asymmetry_python.processing import scan_image_and_process, var_checked_p_value
+from asymmetry_python.processing import scan_image_and_process, var_checked_p_value, find_and_add_edge_colour
 from scipy import stats
 
 def test_scan_image_and_process():
@@ -43,4 +45,27 @@ def test_var_checked_p_value():
     assert mt_p_value < 0.05
     assert wt_p_value > 0.05
 
-    
+def test_find_and_add_edge_colour():
+    image_height = 30
+    image_width = 20
+    p_value_mask = np.array([['None' for x in range(image_width)] for y in range(image_height)], dtype = object)
+    median_diff_array = np.array([[nan for x in range(image_width)] for y in range(image_height)])
+    for y_index in range(image_height):
+        for index in range(10):
+            index += 10
+            median_diff_array[y_index,index] = randint(1,15)
+            p_value_mask[y_index,index] = 'test'
+
+    p_value_mask = find_and_add_edge_colour(median_diff_array,  p_value_mask, 5, '#3CAEA3')
+
+    assert len(p_value_mask) == 30
+    assert len(p_value_mask[0]) == 20
+    assert len(median_diff_array) == 30
+    assert len(median_diff_array[0]) == 20
+    assert p_value_mask[0][10] == '#3CAEA3'
+    assert p_value_mask[2][10] == '#3CAEA3'
+    assert p_value_mask[12][10] == '#3CAEA3'
+    assert p_value_mask[0][0] == 'test'
+    assert p_value_mask[13][0] == 'test'
+    assert p_value_mask[0][-2] == 'None'
+    assert p_value_mask[8][-1] == 'None'
