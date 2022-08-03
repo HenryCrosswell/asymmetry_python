@@ -1,6 +1,7 @@
 """
 Functions to facilitate the loading and sorting of images
 """
+from cmath import nan
 from skimage.io import imread
 from pathlib import Path
 from os import listdir
@@ -29,7 +30,7 @@ def image_dimensions(list_of_files):
 
 def get_pixel_values_from_image_array(x_axis, y_axis, array_of_images):
     """At a specific XY coordinate in all image arrays, return a list of pixel values at the coordinate, if all values are 0, they are removed.
-    
+
     Keyword arguments:
     x_axis -- the inputed x coordinate
     y_axis -- the inputed y coordinate
@@ -41,3 +42,5 @@ def get_pixel_values_from_image_array(x_axis, y_axis, array_of_images):
         if np.all(result) == 0:
             result = []
     return result
+
+
