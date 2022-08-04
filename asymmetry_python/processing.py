@@ -7,6 +7,13 @@ from asymmetry_python.loading import image_dimensions, get_pixel_values_from_ima
 import numpy as np
 from scipy import stats
 
+def find_and_add_edge_colour(median_diff_array,  p_value_mask, np_px_ahead, colour):
+    for y_axis in range(len(median_diff_array)): 
+        nan_values = np.where(np.isnan(median_diff_array[y_axis]))
+        x_pxs_behind = nan_values[0][-1] + np_px_ahead
+        p_value_mask[y_axis,nan_values[0][-1]:x_pxs_behind] = colour
+    return p_value_mask
+
 def threshold(list_of_pixel_values):
     sdev = np.std(list_of_pixel_values)
     mean = np.mean(list_of_pixel_values)
@@ -85,6 +92,6 @@ def scan_image_and_process(wt_files, mt_files):
                 p_value_mask_array[current_y_axis][current_x_axis] = '#ED553B'
             if wt_p_value <= 0.05:
                 p_value_mask_array[current_y_axis][current_x_axis] = '#F6D55C'
-
+    
     return median_diff_array, p_value_mask_array, mt_median_image, wt_median_image
 
