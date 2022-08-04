@@ -54,7 +54,6 @@ def scan_image_and_process(wt_files, mt_files):
     mt_median_image = [[nan for x in range(image_width)] for y in range(image_height)]
     wt_median_image = [[nan for x in range(image_width)] for y in range(image_height)]
     median_diff_array = [[nan for x in range(image_width)] for y in range(image_height)]
-    #p_value_mask_array = np.array([['#3CAEA300' for x in range(image_width)] for y in range(image_height)], dtype = object)
     p_value_mask_array = np.array([['None' for x in range(image_width)] for y in range(image_height)], dtype = object)
     for current_y_axis in range(image_height):
         for current_x_axis in range(image_width):
@@ -71,10 +70,12 @@ def scan_image_and_process(wt_files, mt_files):
             median_mt = np.median(mt_image_pixels)
             median_diff = median_mt-median_wt
 
-
             #saves these medians in a 2D array the same coordinate they were retrieved
-            mt_median_image[current_y_axis][current_x_axis] = median_mt
-            wt_median_image[current_y_axis][current_x_axis] = median_wt
+            if median_mt >= median_wt:
+                mt_median_image[current_y_axis][current_x_axis] = median_mt
+            elif median_mt < median_wt:
+                wt_median_image[current_y_axis][current_x_axis] = median_wt
+
             median_diff_array[current_y_axis][current_x_axis] = median_diff
             
             #at the specific pixel value, assesses distributions of both image pixels, if the mean of the WT is greater than the mutant = the P_value is more significant
