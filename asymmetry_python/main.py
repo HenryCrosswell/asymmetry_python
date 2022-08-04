@@ -5,7 +5,7 @@ Main script in which you pick a folder containing pre-labelled, same size images
 from plotting import plot3Dp_values, plot3Dmedians
 from tkinter import filedialog
 from loading import read_and_sort_files
-from processing import scan_image_and_process, downscale
+from processing import scan_image_and_process
 import matplotlib.pyplot as plt
 import numpy as np
 import os
@@ -29,10 +29,10 @@ while number != 4:
         azimuth = 60
         elevation = 15
     if number == 2:
-        variable_file_name = 'none_my_plot_a90_e90.png'
-        med_variable_file_name = 'none_median_diff_plot_a90_e90.png'
+        variable_file_name = 'none_my_plot_a90_e89.png'
+        med_variable_file_name = 'none_median_diff_plot_a90_e89.png'
         azimuth = 90
-        elevation = 90
+        elevation = 89  #cannot put 90 because colours are displayed incorrectly.
     if number == 3:
         variable_file_name = 'nonee_my_plot_a0_e0.png'
         med_variable_file_name = 'none_median_diff_plot_a0_e0.png'
@@ -47,4 +47,5 @@ while number != 4:
     plt.savefig(os.path.join(file_save_path, med_variable_file_name), dpi = 300)
 
     print(number,'- complete')
+
 print('done')
