@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 from scipy.ndimage import gaussian_filter
 import scipy as sp
 import matplotlib as mpl
-from asymmetry_python.processing import threshold
+from asymmetry_python.processing import find_and_add_edge_colour
 
 def gaussian_filter(image_array, sigma, truncate):
     """Filters a given array excluding nan values more effectively than the normal gaussian function.
@@ -43,13 +43,13 @@ def plot3Dp_values(median_diff_array, P_value_mask, elevation, azimuth):
     image_width = len(median_diff_array[0])
 
     Z = gaussian_filter(median_diff_array, 4, 4)
-
+    p_value_and_edge_mask = find_and_add_edge_colour(median_diff_array, P_value_mask, 5, '#3CAEA3')
     fig, ax = plt.subplots(subplot_kw={"projection": "3d"}, figsize=(8,6))
     ax.set(xlim=(0, image_width), ylim=(0, image_height))
     X, Y = np.meshgrid(range(image_width), range(image_height))
     ax.set_aspect('auto')
     ax.get_proj = lambda: np.dot(Axes3D.get_proj(ax), np.diag([0.4, 1.0, 0.4, 1]))
-    ax.plot_surface(X,Y,Z, rstride=1, cstride=1, facecolors=P_value_mask) #alpha = 0.6)
+    ax.plot_surface(X,Y,Z, rstride=1, cstride=1, facecolors=p_value_and_edge_mask) #alpha = 0.6)
     ax.view_init(elevation,azimuth)
     ax.dist = 7
     
