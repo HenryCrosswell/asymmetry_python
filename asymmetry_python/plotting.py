@@ -42,8 +42,9 @@ def plot3Dp_values(median_diff_array, P_value_mask, elevation, azimuth):
     image_height = len(median_diff_array)
     image_width = len(median_diff_array[0])
 
-    Z = gaussian_filter(median_diff_array, 4, 4)
+    
     p_value_and_edge_mask = find_and_add_edge_colour(median_diff_array, P_value_mask, 5, '#3CAEA3')
+    
     fig, ax = plt.subplots(subplot_kw={"projection": "3d"}, figsize=(8,6))
     ax.set(xlim=(0, image_width), ylim=(0, image_height))
     X, Y = np.meshgrid(range(image_width), range(image_height))
@@ -73,8 +74,7 @@ def plot3Dmedians(wt_median_image, mt_median_image, elevation, azimuth):
     image_height = len(wt_median_image)
     image_width = len(wt_median_image[0])
     plt.rcParams.update({'font.family':'Calibri'})
-    Z = gaussian_filter(wt_median_image, 4, 4)
-    Z1 = gaussian_filter(mt_median_image, 4, 4)
+    
 
     fig, ax = plt.subplots(subplot_kw={"projection": "3d"}, figsize=(8,6))
     ax.set(xlim=(0, image_width), ylim=(0, image_height))
