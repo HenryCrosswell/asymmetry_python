@@ -26,13 +26,6 @@ def threshold(list_of_pixel_values):
     else:
         return []
 
-def downscale(image_array):
-    from skimage.transform import downscale_local_mean
-    x = np.array(image_array)
-    image_downscaled = downscale_local_mean(x, (20, 20))
-    return image_downscaled
-
-
 def var_checked_p_value(wt_pixels, mt_pixels, alt_answer):
     """ Checks the distribution of wt_pixels and mt_pixels, if equally distributed, it updates the variance variable
     for the P_value. Returns the P_value from a ttest in which the mean of the wt distribution is less than the MT.
