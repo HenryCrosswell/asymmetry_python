@@ -58,6 +58,7 @@ def scan_image_and_process(wt_files, mt_files):
     wt_median_image = [[nan for x in range(image_width)] for y in range(image_height)]
     median_diff_array = [[nan for x in range(image_width)] for y in range(image_height)]
     p_value_mask_array = np.array([['None' for x in range(image_width)] for y in range(image_height)], dtype = object)
+    
     for current_y_axis in range(image_height):
         for current_x_axis in range(image_width):
 
