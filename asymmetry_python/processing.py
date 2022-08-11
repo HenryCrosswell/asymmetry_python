@@ -50,18 +50,24 @@ def var_checked_p_value(wt_pixels, mt_pixels):
     mt_pixels -- A list of pixel values at a specific coordinate from the MT images.
     alt_answer -- Determined by a pilot study, defines the alternative hypothesis.
     """
+    if np.mean(wt_pixels) >= np.mean(mt_pixels):
+        name_of_higher_mean_embryos = 'wt_mean'
+    else:
+        name_of_higher_mean_embryos = 'mt_mean'
+    
     _, unchecked_p_value = stats.levene(wt_pixels, mt_pixels)
     if unchecked_p_value < 0.05:
         variance = False
     else:
         variance = True
-    p_value = stats.ttest_ind(wt_pixels, mt_pixels, equal_var = variance, alternative=alt_answer).pvalue
-    return p_value
+    p_value = stats.ttest_ind(wt_pixels, mt_pixels, equal_var = variance).pvalue
+    return p_value, name_of_higher_mean_embryos
 
 def scan_image_and_process(wt_files, mt_files):
     """ From the list of WT and MT files, scans through each image pixel and assigns the values to a seperate list, at a certain x and y coordinate.
-    These lists have their medians calculated and commiited to a new 2D array, at the same coordinate the values were retrieved.
-    The list of pixel values from both WT and MT are compared via a ttest, depending on whether the pixel is significant for either WT or MT, it is assigned a colour.
+    These lists have their medians calculated and commited to a new 2D array, at the same coordinate the values were retrieved.
+    The list of pixel values from both WT and MT are compared via a t-test, depending on whether the mean is higher for either WT or MT, it is assigned a colour.
+    Empty lists are removed to prevent runtime-errors
 
     Keyword arguments:
     wt_files -- A list of 2D arrays for each WT image
@@ -81,36 +87,39 @@ def scan_image_and_process(wt_files, mt_files):
             wt_image_pixels = get_pixel_values_from_image_array(current_x_axis, current_y_axis, wt_files)
             mt_image_pixels = get_pixel_values_from_image_array(current_x_axis, current_y_axis, mt_files)
 
-            #calculates the medians for a list of pixels
-            if len(wt_image_pixels) != 0 or len(mt_image_pixels) != 0:
-                
-                wt_image_pixels = threshold(wt_image_pixels)
-                mt_image_pixels = threshold(mt_image_pixels)
-                median_wt = np.median(wt_image_pixels)
-                median_mt = np.median(mt_image_pixels)
-                median_diff = median_mt-median_wt
+            wt_image_pixels = threshold(wt_image_pixels)
+            mt_image_pixels = threshold(mt_image_pixels)
 
-                #saves these medians in a 2D array the same coordinate they were retrieved
-                if median_mt >= median_wt:
-                    mt_median_image[current_y_axis][current_x_axis] = median_mt
-                elif median_mt < median_wt:
+            if len(wt_image_pixels) !=0 or len(mt_image_pixels) !=0:
+                if len(wt_image_pixels) !=0:
+                    median_wt = np.median(wt_image_pixels)
                     wt_median_image[current_y_axis][current_x_axis] = median_wt
+                else:
+                    median_wt = nan
 
-                median_diff_array[current_y_axis][current_x_axis] = median_diff
-                
-                #at the specific pixel value, assesses distributions of both image pixels, if the mean of the WT is greater than the mutant = the P_value is more significant
-                wt_p_value = var_checked_p_value(wt_image_pixels, mt_image_pixels, 'greater')
-                mt_p_value = var_checked_p_value(wt_image_pixels, mt_image_pixels, 'less')
-                if mt_p_value <= 0.05:
-                    p_value_mask_array[current_y_axis][current_x_axis] = '#ED553B'
-                if wt_p_value <= 0.05:
-                    p_value_mask_array[current_y_axis][current_x_axis] = '#F6D55C'
+                if len(mt_image_pixels) !=0:
+                    median_mt = np.median(mt_image_pixels)
+                    mt_median_image[current_y_axis][current_x_axis] = median_mt
+                else:
+                    median_mt = nan
 
+
+                median_diff_array[current_y_axis][current_x_axis] = median_mt-median_wt
+
+
+                if len(wt_image_pixels) !=0 and len(mt_image_pixels) !=0:
+                    p_value, name_of_higher_mean_embryos = var_checked_p_value(wt_image_pixels, mt_image_pixels)
+                    if p_value <= 0.05:
+                        if name_of_higher_mean_embryos == 'wt_mean':
+                            p_value_mask_array[current_y_axis][current_x_axis] = '#F6D55C' 
+                        else:
+                            p_value_mask_array[current_y_axis][current_x_axis] = '#ED553B'
+                            
+            # empty lists are removed to avoid runtime errors.
             else:
-                median_diff_array[current_y_axis][current_x_axis] = nan
-                p_value_mask_array[current_y_axis][current_x_axis] = nan
-                wt_median_image[current_y_axis][current_x_axis] = nan
                 mt_median_image[current_y_axis][current_x_axis] = nan
+                wt_median_image[current_y_axis][current_x_axis] = nan
+                median_diff_array[current_y_axis][current_x_axis] = nan
 
     return median_diff_array, p_value_mask_array, mt_median_image, wt_median_image
 
