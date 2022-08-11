@@ -10,7 +10,7 @@ import scipy as sp
 import matplotlib as mpl
 from asymmetry_python.processing import find_and_add_edge_colour
 
-def gaussian_filter(image_array, sigma, truncate):
+def custom_gaussian_filter(image_array, sigma, truncate):
     """Filters a given array excluding nan values more effectively than the normal gaussian function.
 
     Keyword arguments:
@@ -29,7 +29,7 @@ def gaussian_filter(image_array, sigma, truncate):
     Z = VV/WW
     return Z
 
-def plot3Dp_values(median_diff_array, P_value_mask, elevation, azimuth):
+def plot3Dp_values(median_diff_array, p_value_mask, elevation, azimuth):
     """Surface plots the difference in median values onto an X,Y,Z axis, smooths the image and extends the Y axis to a representitive size. 
     Following this, applys either a Red mask if the P_value for the mutant is significant, or a Blue mask if the wild-type is significant.
     
@@ -41,16 +41,15 @@ def plot3Dp_values(median_diff_array, P_value_mask, elevation, azimuth):
     """
     image_height = len(median_diff_array)
     image_width = len(median_diff_array[0])
+    median_diff_array = custom_gaussian_filter(median_diff_array, 4,4)
+    p_value_mask, median_diff_edge_array = find_and_add_edge_colour(median_diff_array,  p_value_mask, 5, '#3CAEA3', 0)
 
-    
-    p_value_and_edge_mask = find_and_add_edge_colour(median_diff_array, P_value_mask, 5, '#3CAEA3')
-    
     fig, ax = plt.subplots(subplot_kw={"projection": "3d"}, figsize=(8,6))
     ax.set(xlim=(0, image_width), ylim=(0, image_height))
     X, Y = np.meshgrid(range(image_width), range(image_height))
     ax.set_aspect('auto')
     ax.get_proj = lambda: np.dot(Axes3D.get_proj(ax), np.diag([0.4, 1.0, 0.4, 1]))
-    ax.plot_surface(X,Y,Z, rstride=1, cstride=1, facecolors=p_value_and_edge_mask) #alpha = 0.6)
+    ax.plot_surface(X,Y,median_diff_edge_array, rstride=1, cstride=1, facecolors=p_value_mask) #alpha = 0.6)
     ax.view_init(elevation,azimuth)
     ax.dist = 7
     
@@ -61,6 +60,8 @@ def plot3Dp_values(median_diff_array, P_value_mask, elevation, azimuth):
     wt_proxy = mpl.lines.Line2D([0],[0], linestyle="none", c='#F6D55C', marker = 'o')
     mt_proxy = mpl.lines.Line2D([0],[0], linestyle="none", c='#ED553B', marker = 'o')
     ax.legend([median_proxy, wt_proxy, mt_proxy], ['Median Difference', 'WT significance', 'MT signficance'], numpoints = 1, loc='upper left')
+
+
 
 def plot3Dmedians(wt_median_image, mt_median_image, elevation, azimuth):
     """Surface plots both results onto an X,Y,Z axis, smooths the image and extends the Y axis to a representitive size.
@@ -74,7 +75,8 @@ def plot3Dmedians(wt_median_image, mt_median_image, elevation, azimuth):
     image_height = len(wt_median_image)
     image_width = len(wt_median_image[0])
     plt.rcParams.update({'font.family':'Calibri'})
-    
+    Z = custom_gaussian_filter(wt_median_image, 4, 4)
+    Z1 = custom_gaussian_filter(mt_median_image, 4, 4)
 
     fig, ax = plt.subplots(subplot_kw={"projection": "3d"}, figsize=(8,6))
     ax.set(xlim=(0, image_width), ylim=(0, image_height))
