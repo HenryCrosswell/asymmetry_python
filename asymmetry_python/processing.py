@@ -64,30 +64,37 @@ def scan_image_and_process(wt_files, mt_files):
             #returns a list of values at the current x and y coordinate for either the wt or mt images. 
             wt_image_pixels = get_pixel_values_from_image_array(current_x_axis, current_y_axis, wt_files)
             mt_image_pixels = get_pixel_values_from_image_array(current_x_axis, current_y_axis, mt_files)
-            
-            wt_image_pixels = threshold(wt_image_pixels)
-            mt_image_pixels = threshold(mt_image_pixels)
 
             #calculates the medians for a list of pixels
-            median_wt = np.median(wt_image_pixels)
-            median_mt = np.median(mt_image_pixels)
-            median_diff = median_mt-median_wt
+            if len(wt_image_pixels) != 0 or len(mt_image_pixels) != 0:
+                
+                wt_image_pixels = threshold(wt_image_pixels)
+                mt_image_pixels = threshold(mt_image_pixels)
+                median_wt = np.median(wt_image_pixels)
+                median_mt = np.median(mt_image_pixels)
+                median_diff = median_mt-median_wt
 
-            #saves these medians in a 2D array the same coordinate they were retrieved
-            if median_mt >= median_wt:
-                mt_median_image[current_y_axis][current_x_axis] = median_mt
-            elif median_mt < median_wt:
-                wt_median_image[current_y_axis][current_x_axis] = median_wt
+                #saves these medians in a 2D array the same coordinate they were retrieved
+                if median_mt >= median_wt:
+                    mt_median_image[current_y_axis][current_x_axis] = median_mt
+                elif median_mt < median_wt:
+                    wt_median_image[current_y_axis][current_x_axis] = median_wt
 
-            median_diff_array[current_y_axis][current_x_axis] = median_diff
-            
-            #at the specific pixel value, assesses distributions of both image pixels, if the mean of the WT is greater than the mutant = the P_value is more significant
-            wt_p_value = var_checked_p_value(wt_image_pixels, mt_image_pixels, 'greater')
-            mt_p_value = var_checked_p_value(wt_image_pixels, mt_image_pixels, 'less')
-            if mt_p_value <= 0.05:
-                p_value_mask_array[current_y_axis][current_x_axis] = '#ED553B'
-            if wt_p_value <= 0.05:
-                p_value_mask_array[current_y_axis][current_x_axis] = '#F6D55C'
-    
+                median_diff_array[current_y_axis][current_x_axis] = median_diff
+                
+                #at the specific pixel value, assesses distributions of both image pixels, if the mean of the WT is greater than the mutant = the P_value is more significant
+                wt_p_value = var_checked_p_value(wt_image_pixels, mt_image_pixels, 'greater')
+                mt_p_value = var_checked_p_value(wt_image_pixels, mt_image_pixels, 'less')
+                if mt_p_value <= 0.05:
+                    p_value_mask_array[current_y_axis][current_x_axis] = '#ED553B'
+                if wt_p_value <= 0.05:
+                    p_value_mask_array[current_y_axis][current_x_axis] = '#F6D55C'
+
+            else:
+                median_diff_array[current_y_axis][current_x_axis] = nan
+                p_value_mask_array[current_y_axis][current_x_axis] = nan
+                wt_median_image[current_y_axis][current_x_axis] = nan
+                mt_median_image[current_y_axis][current_x_axis] = nan
+
     return median_diff_array, p_value_mask_array, mt_median_image, wt_median_image
 
