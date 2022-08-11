@@ -2,12 +2,23 @@
 Functions that scan the images and run different calculations on them
 """
 from cmath import nan
-from statistics import median, stdev
 from asymmetry_python.loading import image_dimensions, get_pixel_values_from_image_array
 import numpy as np
 from scipy import stats
 
-def find_and_add_edge_colour(median_diff_array,  p_value_mask, line_width, colour, value):
+
+def find_and_add_edge(median_diff_array,  p_value_mask, line_width, colour, value):
+    ''' Compares the median difference array against the p value mask, finds the first non-zero value
+    and replaces the value added with "line_width" with either a colour or a value, depending on the array type.
+    Returns the same arrays, but with a highlighted edge.
+
+    Keyword arguments:
+    median_diff_array -- filtered median difference array
+    p_value_mask -- mask for median difference array, with p-values coloured depending on WT or MT
+    line_width -- size of edge
+    colour -- colour of edge
+    value -- value for median diff edge replacement
+    '''
     for y_axis in range(len(median_diff_array)): 
         nan_indices = np.where(np.isnan(median_diff_array[y_axis]))
         if len(nan_indices[0]) > 0:
@@ -18,15 +29,19 @@ def find_and_add_edge_colour(median_diff_array,  p_value_mask, line_width, colou
     return p_value_mask, median_diff_array
 
 def threshold(list_of_pixel_values):
-    sdev = np.std(list_of_pixel_values)
-    mean = np.mean(list_of_pixel_values)
-    co_of_var = sdev/mean
-    if co_of_var < 1.4:
-        return list_of_pixel_values
+    ''' checks the list and returns it if there are no outliers, otherwise, returns an empty list.'''
+    if len(list_of_pixel_values) != 0:
+        sdev = np.std(list_of_pixel_values)
+        mean = np.mean(list_of_pixel_values)
+        co_of_var = sdev/mean
+        if co_of_var < 1.4:
+            return list_of_pixel_values
+        else:
+            return []
     else:
         return []
 
-def var_checked_p_value(wt_pixels, mt_pixels, alt_answer):
+def var_checked_p_value(wt_pixels, mt_pixels):
     """ Checks the distribution of wt_pixels and mt_pixels, if equally distributed, it updates the variance variable
     for the P_value. Returns the P_value from a ttest in which the mean of the wt distribution is less than the MT.
 
