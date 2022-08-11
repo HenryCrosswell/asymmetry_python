@@ -2,11 +2,10 @@
 Main script in which you pick a folder containing pre-labelled, same size images. 
 """
 
-from asymmetry_python.processing import find_and_add_edge_colour
-from plotting import plot3Dp_values, plot3Dmedians, gaussian_filter
+from asymmetry_python.plotting import plot3Dp_values, plot3Dmedians
 from tkinter import filedialog
-from loading import read_and_sort_files
-from processing import scan_image_and_process
+from asymmetry_python.loading import read_and_sort_files
+from asymmetry_python.processing import scan_image_and_process
 import matplotlib.pyplot as plt
 import numpy as np
 import os
@@ -19,8 +18,6 @@ folder_path = "C:\\Users\\henry\\OneDrive - University College London\\Project W
 
 wt_files, mt_files = read_and_sort_files(folder_path)
 median_diff_array, p_value_mask_array, mt_median_image, wt_median_image = scan_image_and_process(wt_files, mt_files)
-np.savetxt("median.csv", median_diff_array, delimiter=",")
-np.save("mask.csv", p_value_mask_array)
 
 number = 1
 
@@ -43,15 +40,9 @@ while number != 4:
         elevation = 0
     number += 1
     
-
-    median_diff_array = gaussian_filter(median_diff_array, 4, 4)
-    p_value_mask_array = find_and_add_edge_colour(median_diff_array,  p_value_mask_array, 5, '#3CAEA3')
     plot3Dp_values(median_diff_array, p_value_mask_array, elevation, azimuth)
     plt.savefig(os.path.join(file_save_path, variable_file_name), dpi = 300)
 
-
-    wt_median_image = gaussian_filter(wt_median_image, 4, 4)
-    mt_median_image = gaussian_filter(mt_median_image, 4, 4)
     plot3Dmedians(wt_median_image, mt_median_image, elevation, azimuth)
     plt.savefig(os.path.join(file_save_path, med_variable_file_name), dpi = 300)
 
