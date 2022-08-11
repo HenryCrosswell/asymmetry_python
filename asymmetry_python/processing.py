@@ -6,18 +6,16 @@ from statistics import median, stdev
 from asymmetry_python.loading import image_dimensions, get_pixel_values_from_image_array
 import numpy as np
 from scipy import stats
-from asymmetry_python.plotting import gaussian_filter
 
-def find_and_add_edge_colour(median_diff_array,  p_value_mask, line_width, colour):
+def find_and_add_edge_colour(median_diff_array,  p_value_mask, line_width, colour, value):
     for y_axis in range(len(median_diff_array)): 
-        nan_values = np.where(np.isnan(median_diff_array[y_axis]))
-        for index, values in enumerate(nan_values[0]):
-            if values != index:
-                break
-        indexed_line_width = index + line_width
-        p_value_mask[y_axis,index:indexed_line_width] = colour
-        #p_value_mask[y_axis,:index] = 'None'
-    return p_value_mask
+        nan_indices = np.where(np.isnan(median_diff_array[y_axis]))
+        if len(nan_indices[0]) > 0:
+            first_value_index = nan_indices[0][-1] + 1
+            indexed_line_width = first_value_index + line_width
+            p_value_mask[y_axis,first_value_index:indexed_line_width] = colour
+            median_diff_array[y_axis,first_value_index:indexed_line_width] = value
+    return p_value_mask, median_diff_array
 
 def threshold(list_of_pixel_values):
     sdev = np.std(list_of_pixel_values)
