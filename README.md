@@ -1,10 +1,10 @@
-# __Asymmetry Python__
+# __Plot tissue asymmetry__
 [![tests](https://github.com/HenryCrosswell/asymmetry_python/workflows/tests/badge.svg)](https://github.com/HenryCrosswell/asymmetry_python/actions)
 
 ## __Overview__
 --------
 
-Quantifies 3D posterior neural fold asymmetry in confocal images of mice embryos.
+Quantifies and plots 3D posterior neural fold asymmetry in confocal images of mice embryos.
 
 | **A representative image**  | **Median differences of both WT and MT embryos** | **Median difference image rotated** | **Areas in which there is significant asymmetry** | **Significant asymmetry image rotated** |
 | --- | --- | --- | --- | --- |
@@ -39,21 +39,22 @@ Create another new folder, this will be where your plots are saved.
 ## Step 2 - Installation
 Install the scipt!
 
-1. To create a suitable conda environment, asumming your PWD is where the repo is located. The dependencies listed in [environment.yml](https://github.com/HenryCrosswell/asymmetry_python) will be automatically used by conda when creating a new environment with:
+1. Create a conda environment, with the dependencies listed in [environment.yml](https://github.com/HenryCrosswell/asymmetry_python).
 ```
 conda env create
 ```
-2. A new conda environment named `asymmetry`, which be activated before use:
+2. A new conda environment named `asymmetry`, which will be activated before use:
 ```
 conda activate asymmetry
 ```
-3. Install `asymmetry` next.
+3. Install `plot_tissue_asymmetry` next.
 ```
-pip install asymmetry
+pip install plot_tissue_asymmetry
 ``` 
 
 ## Step 2.5 - customise main.py
 Within the main.py file, you can customise the elevation and azimuth of your final plots.
+//could also be prompted in terminal so this editing script isn't necessary
 
 ## Step 3 - Run the script
 From your terminal, type: 
@@ -66,8 +67,8 @@ Now follow the steps prompted by the terminal.
 1. It will first ask you to select a folder, make sure to select the folder with the pre-named images within.
 2. Next it will ask for an output folder for your saved images, select the one created earlier.
 
-## Contributing
+## Contributors
 ------------
 
-Dr. Alessandro Felder
+Dr. Alessandro Felder 
 
