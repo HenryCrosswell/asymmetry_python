@@ -1,7 +1,7 @@
 """
 Functions that scan the images and run different calculations on them
 """
-from cmath import nan
+from cmath import isnan, nan
 from asymmetry_python.loading import image_dimensions, get_pixel_values_from_image_array
 import numpy as np
 from scipy import stats
@@ -25,12 +25,15 @@ def find_and_add_edge(median_diff_array,  p_value_mask, line_width, colour, valu
             first_value_index = nan_indices[0][-1] + 1
             indexed_line_width = first_value_index + line_width
             p_value_mask[y_axis,first_value_index:indexed_line_width] = colour
+            median_diff_array[y_axis,indexed_line_width-4:indexed_line_width+4] = nan
             median_diff_array[y_axis,first_value_index:indexed_line_width] = value
+            
+            
     return p_value_mask, median_diff_array
 
 def threshold(list_of_pixel_values):
     ''' checks the list and returns it if there are no outliers, otherwise, returns an empty list.'''
-    if len(list_of_pixel_values) != 0:
+    if len(list_of_pixel_values) != 0 or not np.all(np.isnan(list_of_pixel_values)):
         sdev = np.std(list_of_pixel_values)
         mean = np.mean(list_of_pixel_values)
         co_of_var = sdev/mean
@@ -90,30 +93,22 @@ def scan_image_and_process(wt_files, mt_files):
             wt_image_pixels = threshold(wt_image_pixels)
             mt_image_pixels = threshold(mt_image_pixels)
 
-            if len(wt_image_pixels) !=0 or len(mt_image_pixels) !=0:
-                if len(wt_image_pixels) !=0:
-                    median_wt = np.median(wt_image_pixels)
-                    wt_median_image[current_y_axis][current_x_axis] = median_wt
-                else:
-                    median_wt = nan
+            if len(wt_image_pixels) >=2 and len(mt_image_pixels) >=2:
 
-                if len(mt_image_pixels) !=0:
-                    median_mt = np.median(mt_image_pixels)
-                    mt_median_image[current_y_axis][current_x_axis] = median_mt
-                else:
-                    median_mt = nan
+                median_wt = np.median(wt_image_pixels)
+                median_mt = np.median(mt_image_pixels)
 
+                wt_median_image[current_y_axis][current_x_axis] = median_wt
+                mt_median_image[current_y_axis][current_x_axis] = median_mt
 
                 median_diff_array[current_y_axis][current_x_axis] = median_mt-median_wt
 
-
-                if len(wt_image_pixels) !=0 and len(mt_image_pixels) !=0:
-                    p_value, name_of_higher_mean_embryos = var_checked_p_value(wt_image_pixels, mt_image_pixels)
-                    if p_value <= 0.05:
-                        if name_of_higher_mean_embryos == 'wt_mean':
-                            p_value_mask_array[current_y_axis][current_x_axis] = '#F6D55C' 
-                        else:
-                            p_value_mask_array[current_y_axis][current_x_axis] = '#ED553B'
+                p_value, name_of_higher_mean_embryos = var_checked_p_value(wt_image_pixels, mt_image_pixels)
+                if p_value <= 0.05:
+                    if name_of_higher_mean_embryos == 'wt_mean':
+                        p_value_mask_array[current_y_axis][current_x_axis] = '#F6D55C' 
+                    else:
+                        p_value_mask_array[current_y_axis][current_x_axis] = '#ED553B'
                             
             # empty lists are removed to avoid runtime errors.
             else:
