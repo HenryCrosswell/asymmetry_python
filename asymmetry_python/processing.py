@@ -27,7 +27,8 @@ def find_and_add_edge(median_diff_array,  p_value_mask, line_width, colour, valu
             p_value_mask[y_axis,first_value_index:indexed_line_width] = colour
             median_diff_array[y_axis,indexed_line_width-4:indexed_line_width+4] = nan
             median_diff_array[y_axis,first_value_index:indexed_line_width] = value
-            
+        else:
+            p_value_mask[y_axis,0:5] = colour
             
     return p_value_mask, median_diff_array
 
