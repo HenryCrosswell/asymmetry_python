@@ -2,16 +2,23 @@
 Main script in which you pick a folder containing pre-labelled, same size images. 
 """
 
-from asymmetry_python.plotting import plot3Dp_values, plot3Dmedians
+from plotting import plot3Dp_values, plot3Dmedians
 from tkinter import filedialog
-from asymmetry_python.loading import read_and_sort_files
-from asymmetry_python.processing import scan_image_and_process
+#from asymmetry_python.loading import read_and_sort_files
+#from asymmetry_python.processing import scan_image_and_process, total_significant_values
+from loading import read_and_sort_files
+from processing import scan_image_and_process, total_significant_values
 import matplotlib.pyplot as plt
 import numpy as np
 import os
+from time import sleep
+from tqdm import tqdm
 
-file_save_path = "C:\\Users\\henry\\OneDrive - University College London\\Project Work\\Image Analysis\\Images\\Images_from_python_script\\"
-folder_path = "C:\\Users\\henry\\OneDrive - University College London\\Project Work\\Image Analysis\\Images\\Cell shaver\\adjusted_pixel_distance_python\\"
+#file_save_path = "C:\\Users\\henry\\OneDrive - University College London\\Project Work\\Image Analysis\\Images\\Images_from_python_script\\"
+#folder_path = "C:\\Users\\henry\\OneDrive - University College London\\Project Work\\Image Analysis\\Images\\Cell shaver\\adjusted_pixel_distance_python\\"
+folder_path = '/Users/henrycrosswell/Library/CloudStorage/OneDrive-UniversityCollegeLondon/Project Work/Image Analysis/Images/Cell shaver/adjusted_pixel_distance_python/'
+file_save_path = '/Users/henrycrosswell/Library/CloudStorage/OneDrive-UniversityCollegeLondon/Project Work/Image Analysis/Images/Images_from_python_script/'
+
 #folder_path = "C:\\Users\\henry\\OneDrive - University College London\\Project Work\\Image Analysis\\Images\\Cell shaver\\test\\"
 #folder_path = filedialog.askdirectory()
 #file_save_path = filedialog.askdirectory()
@@ -22,7 +29,11 @@ median_diff_array, p_value_mask_array, mt_median_image, wt_median_image = scan_i
 number = 1
 
 # numbers below are hardcorded angles that I want the plot to be saved at
+print(' Creating plots..')
+pbar = tqdm(total = 6)
+        
 while number != 4:
+    
     if number == 1:
         variable_file_name = 'none_my_plot_a60_e15.png'
         med_variable_file_name = 'none_median_diff_plot_a60_e15.png'
@@ -37,16 +48,26 @@ while number != 4:
         variable_file_name = 'nonee_my_plot_a0_e0.png'
         med_variable_file_name = 'none_median_diff_plot_a0_e0.png'
         azimuth = 0
-        elevation = 0
-    number += 1
-    
+        elevation = 0    
+    wt_sig_percentage, mt_sig_percentage = total_significant_values(p_value_mask_array, median_diff_array)
+
+    sleep(0.02) 
+    pbar.update(1)
     plot3Dp_values(median_diff_array, p_value_mask_array, elevation, azimuth)
     plt.savefig(os.path.join(file_save_path, variable_file_name), dpi = 300)
 
+    sleep(0.02) 
+    pbar.update(1)  
     plot3Dmedians(wt_median_image, mt_median_image, elevation, azimuth)
     plt.savefig(os.path.join(file_save_path, med_variable_file_name), dpi = 300)
 
-    print(number,'- complete')
+    number += 1
+    
+print(wt_sig_percentage, mt_sig_percentage)
+np.savetxt('meddiffarray.csv', median_diff_array)
+np.save('p_value_mask.csv', p_value_mask_array)
+np.savetxt('mt_median.csv', mt_median_image)
+np.savetxt('wt_median.csv', wt_median_image)
 
-print('done')
+print('Figures saved in') # , file_save_path)
 

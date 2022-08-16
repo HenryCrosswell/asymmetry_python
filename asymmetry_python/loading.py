@@ -6,13 +6,20 @@ from skimage.io import imread
 from pathlib import Path
 from os import listdir
 import numpy as np
+from time import sleep
+from tqdm import tqdm
 
 def read_and_sort_files(folder_path):
-    """Categorises the files from a folder into mutant or wild-type, ignoring heterozygous genotypes."""    
+    """Categorises the files from a folder into mutant or wild-type, ignoring heterozygous genotypes."""       
+    print(' Loading images...')
+    pbar = tqdm(total = len(listdir(folder_path)))
     mt_list = []
     wt_list = []
-    for file_path in listdir(folder_path): 
-        input_image = imread(Path(folder_path + file_path)) 
+    for file_path in listdir(folder_path):
+        sleep(0.02) 
+        pbar.update(1)
+        #input_image = imread(Path(folder_path + file_path)) 
+        input_image = imread(folder_path + file_path)
         if file_path[:2] == "WT":
             wt_list.append(input_image) 
         elif file_path[:3] == "CF+":
