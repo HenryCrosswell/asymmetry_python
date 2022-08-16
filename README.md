@@ -59,7 +59,7 @@ Within the main.py file, you can customise the elevation and azimuth of your fin
 ## Step 3 - Run the script
 From your terminal, type: 
 ```
-main.py
+python main.py
 ```
 
 ## Step 4
