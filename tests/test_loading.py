@@ -13,7 +13,7 @@ def test_image_dimensions():
 def test_read_and_sort_files():
     test_folder_path = Path("./tests/data/")
     #point to test data path instead of th
-    mt_list, wt_list = read_and_sort_files(test_folder_path)
+    wt_list, mt_list = read_and_sort_files(test_folder_path)
     assert len(mt_list) == 2
     assert len(wt_list) == 2
     for im_array in wt_list: 
@@ -44,5 +44,5 @@ def test_get_pixel_values_from_image_array():
                 assert len(result) == 5
             if current_x_axis == 1:
                 assert all(result) == 1
-                #assert len(result) == 4
             assert all(result) != 0
+
