@@ -49,5 +49,3 @@ def get_pixel_values_from_image_array(x_axis, y_axis, array_of_images):
         if np.all(result) == 0:
             result = []
     return result
-
-
