@@ -4,7 +4,7 @@ Functions that scan the images and run different calculations on them
 from cmath import isnan, nan
 
 #from asymmetry_python.loading import image_dimensions, get_pixel_values_from_image_array
-from loading import image_dimensions, get_pixel_values_from_image_array
+from asymmetry_python.loading import image_dimensions, get_pixel_values_from_image_array
 
 import numpy as np
 from scipy import stats
@@ -82,14 +82,14 @@ def var_checked_p_value(wt_pixels, mt_pixels):
 def total_significant_values(p_value_mask, median_diff_array):
     ''' calculates percentage of WT and MT significance as a percentage of area.'''
 
-    wt_sig_values = len(np.where(p_value_mask == '#F6D55C'))
-    mt_sig_values = len(np.where(p_value_mask == '#ED553B'))
+    wt_sig_values = len(np.where(p_value_mask == '#F6D55C')[0])
+    mt_sig_values = len(np.where(p_value_mask == '#ED553B')[0])
     total_non_nans = np.count_nonzero(~np.isnan(median_diff_array))
 
     wt_sig_percentage = (wt_sig_values/total_non_nans)*100
     mt_sig_percentage = (mt_sig_values/total_non_nans)*100
 
-    return round(wt_sig_percentage, 0), round(mt_sig_percentage, 0)
+    return round(wt_sig_percentage, 2), round(mt_sig_percentage,2)
 
 
 def scan_image_and_process(wt_files, mt_files):
