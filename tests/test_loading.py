@@ -5,6 +5,7 @@ from statistics import median
 import numpy as np
 from asymmetry_python.loading import image_dimensions, read_and_sort_files, get_pixel_values_from_image_array
 from os import listdir
+from pathlib import Path
 
 def test_image_dimensions():
     test_image_list = [np.ones(shape=(3, 4)), np.ones(shape=(3, 4))]
@@ -13,7 +14,7 @@ def test_image_dimensions():
     assert height == 3
 
 def test_read_and_sort_files():
-    test_folder_path = "C:\\Users\\henry\\OneDrive - University College London\\Coding\\tissue_asymmetry_python\\tests\\data\\"
+    test_folder_path = Path("./tests/data/")
     #point to test data path instead of th
     wt_list, mt_list = read_and_sort_files(test_folder_path)
     assert len(mt_list) == 2
