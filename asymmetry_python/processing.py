@@ -4,7 +4,7 @@ Functions that scan the images and run different calculations on them
 from cmath import isnan, nan
 
 #from asymmetry_python.loading import image_dimensions, get_pixel_values_from_image_array
-from asymmetry_python.loading import image_dimensions, get_pixel_values_from_image_array
+from loading import image_dimensions, get_pixel_values_from_image_array
 
 import numpy as np
 from scipy import stats
@@ -24,18 +24,53 @@ def find_and_add_edge(median_diff_array,  p_value_mask, line_width, colour, valu
     colour -- colour of edge
     value -- value for median diff edge replacement
     '''
+    first_y_axis_line = True
+    offset = 10
     for y_axis in range(len(median_diff_array)): 
-        nan_indices = np.where(np.isnan(median_diff_array[y_axis]))
-        if len(nan_indices[0]) > 0:
-            first_value_index = nan_indices[0][-1] + 1
-            indexed_line_width = first_value_index + line_width
-            p_value_mask[y_axis,first_value_index:indexed_line_width] = colour
-            median_diff_array[y_axis,indexed_line_width-7:indexed_line_width+7] = nan
-            median_diff_array[y_axis,first_value_index:indexed_line_width] = value
-        else:
-            p_value_mask[y_axis,0:line_width] = colour
-            median_diff_array[y_axis,0:line_width] = value
-            
+
+        non_nan_indices = np.where(~np.isnan(median_diff_array[y_axis])) 
+        if len(non_nan_indices[0]) != 0:
+            first_left_value_index = non_nan_indices[0][-1]
+            first_right_value_index = non_nan_indices[0][0]
+            left_edge = first_left_value_index + line_width
+            right_edge = first_right_value_index - line_width 
+
+            #paints first line
+            if first_y_axis_line == True:
+                left_index_of_first_line = first_left_value_index
+
+                p_value_mask[y_axis,right_edge:left_edge] = colour
+
+                median_diff_array[y_axis,right_edge-offset:left_edge+offset] = nan
+
+                median_diff_array[y_axis,right_edge:left_edge] = value
+
+                first_y_axis_line = False            
+                   
+            #right edge
+            if first_y_axis_line == False:
+
+                p_value_mask[y_axis,right_edge:first_right_value_index] = colour
+
+                median_diff_array[y_axis,right_edge-offset:first_right_value_index+offset] = nan
+
+                median_diff_array[y_axis,right_edge:first_right_value_index] = value
+
+            # left edge
+            if first_left_value_index >= left_index_of_first_line and y_axis < 1000:
+                p_value_mask[y_axis,first_left_value_index:left_edge] = colour
+
+                median_diff_array[y_axis,first_left_value_index-offset:left_edge+offset] = nan
+
+                median_diff_array[y_axis,first_left_value_index:left_edge] = value
+
+            if len(np.isnan(median_diff_array[y_axis])) == 0:
+                p_value_mask[y_axis,0:line_width] = colour
+
+                median_diff_array[y_axis,0:line_width+offset] = nan
+
+                median_diff_array[y_axis,0:line_width] = value
+                
     return p_value_mask, median_diff_array
 
 def threshold(list_of_pixel_values):
