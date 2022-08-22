@@ -27,7 +27,6 @@ def find_and_add_edge(median_diff_array,  p_value_mask, line_width, colour, valu
     value -- value for median diff edge replacement
     '''
     first_y_axis_line = True
-    offset = 10
     previous_first_right_value_index = -1
     previous_first_left_value_index = -1
     for y_axis in range(len(median_diff_array)): 
@@ -44,8 +43,6 @@ def find_and_add_edge(median_diff_array,  p_value_mask, line_width, colour, valu
             if first_y_axis_line == True:
                 left_index_of_first_line = first_left_value_index
                 p_value_mask[y_axis,right_edge:left_edge] = colour
-                median_diff_array[y_axis,right_edge-offset:left_edge+offset] = value
-                median_diff_array[y_axis,right_edge:left_edge] = value
                 first_y_axis_line = False
                 previous_first_right_value_index = first_right_value_index
                 previous_first_left_value_index = first_left_value_index
@@ -54,19 +51,14 @@ def find_and_add_edge(median_diff_array,  p_value_mask, line_width, colour, valu
             #right edge
             if first_y_axis_line == False:
                 p_value_mask[y_axis,right_edge:max(previous_first_right_value_index, first_right_value_index)] = colour
-                median_diff_array[y_axis,max(0,right_edge-offset):max(previous_first_right_value_index, first_right_value_index)+offset] = nan
-                median_diff_array[y_axis,max(0,right_edge):max(previous_first_right_value_index, first_right_value_index)+1] = value
-
+                
             # left edge
             if first_left_value_index >= left_index_of_first_line and y_axis < 1000:
                 p_value_mask[y_axis,min(previous_first_left_value_index, first_left_value_index):left_edge] = colour
-                median_diff_array[y_axis,min(previous_first_left_value_index-offset, first_left_value_index-offset):left_edge+offset] = nan
-                median_diff_array[y_axis,min(previous_first_left_value_index, first_left_value_index):left_edge] = value
-
+            
+            # embryo close to right border of image
             if first_right_value_index <= line_width:
                 p_value_mask[y_axis,0:line_width] = colour
-                median_diff_array[y_axis,0:line_width+offset] = nan
-                median_diff_array[y_axis,0:line_width] = value
 
             previous_first_right_value_index = first_right_value_index
             previous_first_left_value_index = first_left_value_index
@@ -79,8 +71,6 @@ def find_and_add_edge(median_diff_array,  p_value_mask, line_width, colour, valu
     bottom_line = 1796
     bottom_offset = 3
     p_value_mask[bottom_line:bottom_line+bottom_offset,previous_first_right_value_index:499] = colour
-    median_diff_array[bottom_line-bottom_offset:bottom_line+bottom_offset,previous_first_right_value_index-offset:499] = nan
-    median_diff_array[bottom_line:bottom_line+bottom_offset,previous_first_right_value_index-bottom_offset:499] = value
 
     return p_value_mask, median_diff_array
 
