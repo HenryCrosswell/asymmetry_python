@@ -4,7 +4,7 @@ Functions that scan the images and run different calculations on them
 from cmath import isnan, nan
 
 #from asymmetry_python.loading import image_dimensions, get_pixel_values_from_image_array
-from loading import image_dimensions, get_pixel_values_from_image_array
+from asymmetry_python.loading import image_dimensions, get_pixel_values_from_image_array
 
 import numpy as np
 from scipy import stats
@@ -17,6 +17,8 @@ def find_and_add_edge(median_diff_array,  p_value_mask, line_width, colour, valu
     and replaces the value added with "line_width" with either a colour or a value, depending on the array type.
     Returns the same arrays, but with a highlighted edge.
 
+    Variable names follow the convention that left and right pertain to the image view, not the order in the array.
+
     Keyword arguments:
     median_diff_array -- filtered median difference array
     p_value_mask -- mask for median difference array, with p-values coloured depending on WT or MT
@@ -25,19 +27,31 @@ def find_and_add_edge(median_diff_array,  p_value_mask, line_width, colour, valu
     value -- value for median diff edge replacement
     '''
     first_y_axis_line = True
+<<<<<<< HEAD
     offset = 10
+=======
+    previous_first_right_value_index = -1
+    previous_first_left_value_index = -1
+>>>>>>> 5e37ae17c038879f9e3dd101be533f711cca7d92
     for y_axis in range(len(median_diff_array)): 
 
         non_nan_indices = np.where(~np.isnan(median_diff_array[y_axis])) 
         if len(non_nan_indices[0]) != 0:
             first_left_value_index = non_nan_indices[0][-1]
+<<<<<<< HEAD
             first_right_value_index = non_nan_indices[0][0]
             left_edge = first_left_value_index + line_width
+=======
+            left_edge = first_left_value_index + line_width
+
+            first_right_value_index = non_nan_indices[0][0]
+>>>>>>> 5e37ae17c038879f9e3dd101be533f711cca7d92
             right_edge = first_right_value_index - line_width 
 
             #paints first line
             if first_y_axis_line == True:
                 left_index_of_first_line = first_left_value_index
+<<<<<<< HEAD
 
                 p_value_mask[y_axis,right_edge:left_edge] = colour
 
@@ -71,6 +85,38 @@ def find_and_add_edge(median_diff_array,  p_value_mask, line_width, colour, valu
 
                 median_diff_array[y_axis,0:line_width] = value
                 
+=======
+                p_value_mask[y_axis,right_edge:left_edge] = colour
+                first_y_axis_line = False
+                previous_first_right_value_index = first_right_value_index
+                previous_first_left_value_index = first_left_value_index
+                continue
+
+            #right edge
+            if first_y_axis_line == False:
+                p_value_mask[y_axis,right_edge:max(previous_first_right_value_index, first_right_value_index)] = colour
+                
+            # left edge
+            if first_left_value_index >= left_index_of_first_line and y_axis < 1000:
+                p_value_mask[y_axis,min(previous_first_left_value_index, first_left_value_index):left_edge] = colour
+            
+            # embryo close to right border of image
+            if first_right_value_index <= line_width:
+                p_value_mask[y_axis,0:line_width] = colour
+
+            previous_first_right_value_index = first_right_value_index
+            previous_first_left_value_index = first_left_value_index
+
+    # hack to deal with weird green values inside embryo:
+    # replace the p value mask where it is green with nan for the problematic region
+    p_value_mask[300:600, 300:500] = np.where(p_value_mask[300:600, 300:500]==colour, "None", p_value_mask[300:600, 300:500])
+    
+    # draw bottom line
+    bottom_line = 1796
+    bottom_offset = 3
+    p_value_mask[bottom_line:bottom_line+bottom_offset,previous_first_right_value_index:499] = colour
+
+>>>>>>> 5e37ae17c038879f9e3dd101be533f711cca7d92
     return p_value_mask, median_diff_array
 
 def threshold(list_of_pixel_values):

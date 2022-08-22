@@ -3,6 +3,7 @@ Functions to aid in the plotting of created 2D arrays
 """
 
 import numpy as np
+from cmath import nan
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
 from scipy.ndimage import gaussian_filter
@@ -60,8 +61,12 @@ def plot3Dp_values(median_diff_array, p_value_mask, elevation, azimuth):
     ax.get_proj = lambda: np.dot(Axes3D.get_proj(ax), np.diag([0.4, 1.0, 0.4, 1]))
 
     # Fills the skeleton with a surface plot, with the Z axis being the med. diff. and a mask of the coloured p_values are applied.
-    ax.plot_surface(X,Y,median_diff_edge_array, rstride=1, cstride=1, facecolors=p_value_mask)
-
+    green_entries = np.where(p_value_mask=='#3CAEA3', p_value_mask, "None")
+    ax.plot_surface(X,Y,np.zeros_like(median_diff_edge_array), rstride=1, cstride=1, facecolors=green_entries)
+    
+    all_not_green_entries = np.where(p_value_mask=='#3CAEA3', "None", p_value_mask)
+    ax.plot_surface(X,Y,median_diff_edge_array, rstride=1, cstride=1, facecolors=all_not_green_entries)
+    
     # Removes x and y ticks and sets z limit.
     ax.set_xticklabels([])
     ax.set_yticklabels([])

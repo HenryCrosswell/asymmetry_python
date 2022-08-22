@@ -1,0 +1,42 @@
+import encodings
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+import numpy as np
+import os
+from time import sleep
+from tqdm import tqdm
+from plotting import plot3Dp_values, plot3Dmedians, custom_gaussian_filter
+
+def make_plot(median_diff_array):
+    image_height = len(median_diff_array)
+    image_width = len(median_diff_array[0])
+    median_diff_array = custom_gaussian_filter(median_diff_array, 4,4)
+    fig, ax = plt.subplots(subplot_kw={"projection": "3d"}, figsize=(8,6))
+    ax.set(xlim=(0, image_width), ylim=(0, image_height))
+    X, Y = np.meshgrid(range(image_width), range(image_height))
+    ax.set_aspect('auto')
+    plt.rcParams.update({'font.family':'Calibri'})
+
+    # Stretches plot along the Y axis - makes it more representative.
+    ax.get_proj = lambda: np.dot(Axes3D.get_proj(ax), np.diag([0.4, 1.0, 0.4, 1]))
+    ax.view_init(90,90)
+    ax.dist = 7
+    # Fills the skeleton with a surface plot, with the Z axis being the med. diff. and a mask of the coloured p_values are applied.
+    ax.plot_surface(X,Y,median_diff_array, rstride=1, cstride=1)
+
+path = open('C:\\Users\\henry\\OneDrive - University College London\\Coding\\tissue_asymmetry_python\\tests\\meddiffarray.csv')
+median_diff_array = np.loadtxt(path, delimiter=" ")
+
+path = open('C:\\Users\\henry\\OneDrive - University College London\\Coding\\tissue_asymmetry_python\\tests\\mt_median.csv')
+mt_median = np.loadtxt(path, delimiter=" ")
+
+path = open('C:\\Users\\henry\\OneDrive - University College London\\Coding\\tissue_asymmetry_python\\tests\\wt_median.csv')
+wt_median = np.loadtxt(path, delimiter=" ")
+
+path = open('C:\\Users\\henry\\OneDrive - University College London\\Coding\\tissue_asymmetry_python\\tests\\p_value_mask.csv.npy', 'rb')
+p_value_mask = np.load(path, allow_pickle=True)
+
+
+
+plot3Dp_values(median_diff_array, p_value_mask,90,90)
+plt.show()
