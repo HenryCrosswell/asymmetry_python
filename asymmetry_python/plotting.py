@@ -3,7 +3,6 @@ Functions to aid in the plotting of created 2D arrays
 """
 
 import numpy as np
-from cmath import nan
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
 from scipy.ndimage import gaussian_filter
@@ -67,7 +66,7 @@ def plot3Dp_values(median_diff_array, p_value_mask, elevation, azimuth):
     all_not_green_entries = np.where(p_value_mask=='#3CAEA3', "None", p_value_mask)
     ax.plot_surface(X,Y,median_diff_edge_array, rstride=1, cstride=1, facecolors=all_not_green_entries)
     
-    # Removes x and y ticks and sets z limit.
+    # Removes x, y and z ticks and sets z limit.
     ax.set_xticklabels([])
     ax.set_yticklabels([])
     ax.set_zticklabels([])
@@ -115,14 +114,15 @@ def plot3Dmedians(wt_median_image, mt_median_image, elevation, azimuth):
     ax.plot_surface(X, Y, mt_filtered_image,  color='#6A76B7', linewidth=0, antialiased=True, alpha = 0.8, rcount=200, ccount=200)
     ax.get_proj = lambda: np.dot(Axes3D.get_proj(ax), np.diag([0.4, 1.0, 0.4, 1]))
     
-    # Sets the distance and rotation of the viewing angle for the plot - sets z limit.
+    # Sets the distance and rotation of the viewing angle for the plot.
     ax.dist=7
+    ax.view_init(elevation,azimuth)
+
+    # Removes x, y and z ticks and sets z limit.
     ax.set_xticklabels([])
     ax.set_yticklabels([])
     ax.set_zticklabels([])
     ax.set_zlim(0,70)
-    
-    ax.view_init(elevation,azimuth)
 
     # Creates a figure legend
     wt_proxy = mpl.lines.Line2D([0],[0], linestyle="none", c='#6A76B7', marker = 'o')

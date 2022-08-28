@@ -1,7 +1,7 @@
 """
 Functions to facilitate the loading and sorting of images
 """
-from cmath import nan
+
 from skimage.io import imread
 from pathlib import Path
 from os import listdir

@@ -9,7 +9,6 @@ from asymmetry_python.processing import scan_image_and_process, total_significan
 from loading import read_and_sort_files
 from processing import scan_image_and_process, total_significant_values
 import matplotlib.pyplot as plt
-import numpy as np
 import os
 from time import sleep
 from tqdm import tqdm
@@ -24,7 +23,7 @@ median_diff_array, p_value_mask_array, mt_median_image, wt_median_image = scan_i
 
 number = 1
 
-# numbers below are hardcorded angles that I want the plot to be saved at
+# numbers below are hardcorded angles that present the plots nicely.
 print(' Creating plots..')
 pbar = tqdm(total = 6)
         
@@ -39,7 +38,7 @@ while number != 4:
         variable_file_name = 'none_my_plot_a90_e89.png'
         med_variable_file_name = '_median_diff_plot_a90_e89.png'
         azimuth = 90
-        elevation = 89  #cannot put 90 because colours are displayed incorrectly.
+        elevation = 89  # cannot put 90 because colours are displayed incorrectly.
     if number == 3:
         variable_file_name = 'nonee_my_plot_a0_e0.png'
         med_variable_file_name = 'median_diff_plot_a0_e0.png'

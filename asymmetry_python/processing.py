@@ -1,11 +1,9 @@
 """
 Functions that scan the images and run different calculations on them
 """
-from cmath import isnan, nan
 
-#from asymmetry_python.loading import image_dimensions, get_pixel_values_from_image_array
+from cmath import nan
 from asymmetry_python.loading import image_dimensions, get_pixel_values_from_image_array
-
 import numpy as np
 from scipy import stats
 from time import sleep
@@ -24,7 +22,6 @@ def find_and_add_edge(median_diff_array,  p_value_mask, line_width, colour):
     p_value_mask -- mask for median difference array, with p-values coloured depending on WT or MT
     line_width -- size of edge
     colour -- colour of edge
-    value -- value for median diff edge replacement
     '''
     first_y_axis_line = True
     previous_first_right_value_index = -1
