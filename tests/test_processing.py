@@ -1,10 +1,7 @@
 from cmath import nan
 from random import randint
-from statistics import median
 import numpy as np
 from asymmetry_python.processing import find_and_add_edge, scan_image_and_process, var_checked_p_value, threshold
-from scipy import stats
-import sys
 
 def test_scan_image_and_process():
 
