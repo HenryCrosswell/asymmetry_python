@@ -48,7 +48,7 @@ def plot3Dp_values(median_diff_array, p_value_mask, elevation, azimuth):
     image_height = len(median_diff_array)
     image_width = len(median_diff_array[0])
     median_diff_array = custom_gaussian_filter(median_diff_array, 4,4)
-    p_value_mask, median_diff_edge_array = find_and_add_edge(median_diff_array,  p_value_mask, 5, '#3CAEA3', 0)
+    p_value_mask, median_diff_edge_array = find_and_add_edge(median_diff_array,  p_value_mask, 5, '#3CAEA3')
 
     # Creates the skeleton of figure, in which we will add plots.
     fig, ax = plt.subplots(subplot_kw={"projection": "3d"}, figsize=(8,6))
