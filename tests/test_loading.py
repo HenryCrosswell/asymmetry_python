@@ -1,8 +1,6 @@
-from cgi import test
 from pathlib import Path
 import numpy as np
 from asymmetry_python.loading import image_dimensions, read_and_sort_files, get_pixel_values_from_image_array
-from os import listdir
 from pathlib import Path
 
 def test_image_dimensions():

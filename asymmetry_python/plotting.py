@@ -47,7 +47,7 @@ def plot3Dp_values(median_diff_array, p_value_mask, elevation, azimuth):
     image_height = len(median_diff_array)
     image_width = len(median_diff_array[0])
     median_diff_array = custom_gaussian_filter(median_diff_array, 4,4)
-    p_value_mask, median_diff_edge_array = find_and_add_edge(median_diff_array,  p_value_mask, 5, '#3CAEA3', 0)
+    p_value_mask, median_diff_edge_array = find_and_add_edge(median_diff_array,  p_value_mask, 5, '#3CAEA3')
 
     # Creates the skeleton of figure, in which we will add plots.
     fig, ax = plt.subplots(subplot_kw={"projection": "3d"}, figsize=(8,6))
@@ -60,11 +60,16 @@ def plot3Dp_values(median_diff_array, p_value_mask, elevation, azimuth):
     ax.get_proj = lambda: np.dot(Axes3D.get_proj(ax), np.diag([0.4, 1.0, 0.4, 1]))
 
     # Fills the skeleton with a surface plot, with the Z axis being the med. diff. and a mask of the coloured p_values are applied.
-    ax.plot_surface(X,Y,median_diff_edge_array, rstride=1, cstride=1, facecolors=p_value_mask)
-
-    # Removes x and y ticks and sets z limit.
+    green_entries = np.where(p_value_mask=='#3CAEA3', p_value_mask, "None")
+    ax.plot_surface(X,Y,np.zeros_like(median_diff_edge_array), rstride=1, cstride=1, facecolors=green_entries)
+    
+    all_not_green_entries = np.where(p_value_mask=='#3CAEA3', "None", p_value_mask)
+    ax.plot_surface(X,Y,median_diff_edge_array, rstride=1, cstride=1, facecolors=all_not_green_entries)
+    
+    # Removes x, y and z ticks and sets z limit.
     ax.set_xticklabels([])
     ax.set_yticklabels([])
+    ax.set_zticklabels([])
     ax.set_zlim(-40,40)
     
     # Sets the distance and rotation of the viewing angle for the plot.
@@ -73,8 +78,8 @@ def plot3Dp_values(median_diff_array, p_value_mask, elevation, azimuth):
     
     # Creates a figure legend
     median_proxy = mpl.lines.Line2D([0],[0], linestyle="none", c='#3CAEA3', marker = 'o')
-    wt_proxy = mpl.lines.Line2D([0],[0], linestyle="none", c='#F6D55C', marker = 'o')
-    mt_proxy = mpl.lines.Line2D([0],[0], linestyle="none", c='#ED553B', marker = 'o')
+    wt_proxy = mpl.lines.Line2D([0],[0], linestyle="none", c='#ED553B', marker = 'o')
+    mt_proxy = mpl.lines.Line2D([0],[0], linestyle="none", c='#F6D55C', marker = 'o')
     ax.legend([median_proxy, wt_proxy, mt_proxy], ['Median Difference', 'WT significance', 'MT signficance'], numpoints = 1, loc='upper left')
 
 
@@ -90,8 +95,8 @@ def plot3Dmedians(wt_median_image, mt_median_image, elevation, azimuth):
     # Applys a gaussian filter to the inputed 2D arrays.
     image_height = len(wt_median_image)
     image_width = len(wt_median_image[0])
-    wt_filtered_image = custom_gaussian_filter(wt_median_image, 4, 4)
-    mt_filtered_image = custom_gaussian_filter(mt_median_image, 4, 4)
+    wt_filtered_image = custom_gaussian_filter(wt_median_image, 1, 4)
+    mt_filtered_image = custom_gaussian_filter(mt_median_image, 1, 4)
 
     # Creates the skeleton of figure, in which we will add plots.
     fig, ax = plt.subplots(subplot_kw={"projection": "3d"}, figsize=(8,6))
@@ -109,10 +114,15 @@ def plot3Dmedians(wt_median_image, mt_median_image, elevation, azimuth):
     ax.plot_surface(X, Y, mt_filtered_image,  color='#6A76B7', linewidth=0, antialiased=True, alpha = 0.8, rcount=200, ccount=200)
     ax.get_proj = lambda: np.dot(Axes3D.get_proj(ax), np.diag([0.4, 1.0, 0.4, 1]))
     
-    # Sets the distance and rotation of the viewing angle for the plot - sets z limit.
+    # Sets the distance and rotation of the viewing angle for the plot.
     ax.dist=7
-    ax.set_zlim(0,70)
     ax.view_init(elevation,azimuth)
+
+    # Removes x, y and z ticks and sets z limit.
+    ax.set_xticklabels([])
+    ax.set_yticklabels([])
+    ax.set_zticklabels([])
+    ax.set_zlim(0,70)
 
     # Creates a figure legend
     wt_proxy = mpl.lines.Line2D([0],[0], linestyle="none", c='#6A76B7', marker = 'o')
