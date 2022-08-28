@@ -12,7 +12,7 @@ from time import sleep
 from tqdm import tqdm
 
 
-def find_and_add_edge(median_diff_array,  p_value_mask, line_width, colour, value):
+def find_and_add_edge(median_diff_array,  p_value_mask, line_width, colour):
     ''' Compares the median difference array against the p value mask, finds the first non-zero value
     and replaces the value added with "line_width" with either a colour or a value, depending on the array type.
     Returns the same arrays, but with a highlighted edge.
