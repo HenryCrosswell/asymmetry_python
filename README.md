@@ -11,7 +11,7 @@ Quantifies and plots 3D posterior neural fold asymmetry in confocal images of mi
 | ![](docs/representative_image.png) | ![](docs/med_diff.png) | ![](docs/med_diff_rotated.png) | ![](docs/Sig_image.png) | ![](docs/Sig_rotated.png) |
 
 
-version number: 1.0.0
+version number: 1.0.1
 author: Henry Crosswell
 
 ----------------------------------
@@ -19,11 +19,11 @@ author: Henry Crosswell
 ## __Usage:__
 ---
 Disclaimer: 
-This technique has only been tested on confocal images of posterior neural folds of E9 mice. 
+This technique has only been tested on confocal images of the posterior neural folds of E9 mice. 
 
 
 ## Step 0
-To prepare the images before analyse, the following [macros](https://github.com/HenryCrosswell/asymmetry_python) must be used on ImageJ.
+To prepare the images before analyse, the following [macros](https://github.com/HenryCrosswell/Asymmetry_Macros) must be used on ImageJ.
 
 Images must all be resized within the same dimensions.
 

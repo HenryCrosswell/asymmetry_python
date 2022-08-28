@@ -14,10 +14,10 @@ import os
 from time import sleep
 from tqdm import tqdm
 
-#file_save_path = "C:\\Users\\henry\\OneDrive - University College London\\Project Work\\Image Analysis\\Images\\Images_from_python_script\\"
-#folder_path = "C:\\Users\\henry\\OneDrive - University College London\\Project Work\\Image Analysis\\Images\\Cell shaver\\adjusted_pixel_distance_python\\"
-folder_path = '/Users/henrycrosswell/Library/CloudStorage/OneDrive-UniversityCollegeLondon/Project Work/Image Analysis/Images/Cell shaver/adjusted_pixel_distance_python/'
-file_save_path = '/Users/henrycrosswell/Library/CloudStorage/OneDrive-UniversityCollegeLondon/Project Work/Image Analysis/Images/Images_from_python_script/'
+file_save_path = "C:\\Users\\henry\\OneDrive - University College London\\Project Work\\Image Analysis\\Images\\Images_from_python_script\\"
+folder_path = "C:\\Users\\henry\\OneDrive - University College London\\Project Work\\Image Analysis\\Images\\Cell shaver\\adjusted_pixel_distance_python\\"
+#folder_path = '/Users/henrycrosswell/Library/CloudStorage/OneDrive-UniversityCollegeLondon/Project Work/Image Analysis/Images/Cell shaver/adjusted_pixel_distance_python/'
+#file_save_path = '/Users/henrycrosswell/Library/CloudStorage/OneDrive-UniversityCollegeLondon/Project Work/Image Analysis/Images/Images_from_python_script/'
 
 #folder_path = "C:\\Users\\henry\\OneDrive - University College London\\Project Work\\Image Analysis\\Images\\Cell shaver\\test\\"
 #folder_path = filedialog.askdirectory()
@@ -36,17 +36,17 @@ while number != 4:
     
     if number == 1:
         variable_file_name = 'none_my_plot_a60_e15.png'
-        med_variable_file_name = 'none_median_diff_plot_a60_e15.png'
+        med_variable_file_name = 'median_diff_plot_a60_e15.png'
         azimuth = 60
         elevation = 15
     if number == 2:
         variable_file_name = 'none_my_plot_a90_e89.png'
-        med_variable_file_name = 'none_median_diff_plot_a90_e89.png'
+        med_variable_file_name = '_median_diff_plot_a90_e89.png'
         azimuth = 90
         elevation = 89  #cannot put 90 because colours are displayed incorrectly.
     if number == 3:
         variable_file_name = 'nonee_my_plot_a0_e0.png'
-        med_variable_file_name = 'none_median_diff_plot_a0_e0.png'
+        med_variable_file_name = 'median_diff_plot_a0_e0.png'
         azimuth = 0
         elevation = 0    
     wt_sig_percentage, mt_sig_percentage = total_significant_values(p_value_mask_array, median_diff_array)
@@ -64,10 +64,11 @@ while number != 4:
     number += 1
     
 print(wt_sig_percentage, mt_sig_percentage)
+'''
 np.savetxt('meddiffarray.csv', median_diff_array)
 np.save('p_value_mask.csv', p_value_mask_array)
 np.savetxt('mt_median.csv', mt_median_image)
 np.savetxt('wt_median.csv', wt_median_image)
-
+'''
 print('Figures saved in') # , file_save_path)
 

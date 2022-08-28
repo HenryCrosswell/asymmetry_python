@@ -27,65 +27,21 @@ def find_and_add_edge(median_diff_array,  p_value_mask, line_width, colour, valu
     value -- value for median diff edge replacement
     '''
     first_y_axis_line = True
-<<<<<<< HEAD
-    offset = 10
-=======
     previous_first_right_value_index = -1
     previous_first_left_value_index = -1
->>>>>>> 5e37ae17c038879f9e3dd101be533f711cca7d92
     for y_axis in range(len(median_diff_array)): 
 
         non_nan_indices = np.where(~np.isnan(median_diff_array[y_axis])) 
         if len(non_nan_indices[0]) != 0:
             first_left_value_index = non_nan_indices[0][-1]
-<<<<<<< HEAD
             first_right_value_index = non_nan_indices[0][0]
-            left_edge = first_left_value_index + line_width
-=======
             left_edge = first_left_value_index + line_width
 
-            first_right_value_index = non_nan_indices[0][0]
->>>>>>> 5e37ae17c038879f9e3dd101be533f711cca7d92
             right_edge = first_right_value_index - line_width 
 
             #paints first line
             if first_y_axis_line == True:
                 left_index_of_first_line = first_left_value_index
-<<<<<<< HEAD
-
-                p_value_mask[y_axis,right_edge:left_edge] = colour
-
-                median_diff_array[y_axis,right_edge-offset:left_edge+offset] = nan
-
-                median_diff_array[y_axis,right_edge:left_edge] = value
-
-                first_y_axis_line = False            
-                   
-            #right edge
-            if first_y_axis_line == False:
-
-                p_value_mask[y_axis,right_edge:first_right_value_index] = colour
-
-                median_diff_array[y_axis,right_edge-offset:first_right_value_index+offset] = nan
-
-                median_diff_array[y_axis,right_edge:first_right_value_index] = value
-
-            # left edge
-            if first_left_value_index >= left_index_of_first_line and y_axis < 1000:
-                p_value_mask[y_axis,first_left_value_index:left_edge] = colour
-
-                median_diff_array[y_axis,first_left_value_index-offset:left_edge+offset] = nan
-
-                median_diff_array[y_axis,first_left_value_index:left_edge] = value
-
-            if len(np.isnan(median_diff_array[y_axis])) == 0:
-                p_value_mask[y_axis,0:line_width] = colour
-
-                median_diff_array[y_axis,0:line_width+offset] = nan
-
-                median_diff_array[y_axis,0:line_width] = value
-                
-=======
                 p_value_mask[y_axis,right_edge:left_edge] = colour
                 first_y_axis_line = False
                 previous_first_right_value_index = first_right_value_index
@@ -116,7 +72,6 @@ def find_and_add_edge(median_diff_array,  p_value_mask, line_width, colour, valu
     bottom_offset = 3
     p_value_mask[bottom_line:bottom_line+bottom_offset,previous_first_right_value_index:499] = colour
 
->>>>>>> 5e37ae17c038879f9e3dd101be533f711cca7d92
     return p_value_mask, median_diff_array
 
 def threshold(list_of_pixel_values):
@@ -125,7 +80,7 @@ def threshold(list_of_pixel_values):
         sdev = np.std(list_of_pixel_values)
         mean = np.mean(list_of_pixel_values)
         co_of_var = sdev/mean
-        if co_of_var < 1.4:
+        if co_of_var < 2.5:
             return list_of_pixel_values
         else:
             return []
@@ -148,8 +103,6 @@ def var_checked_p_value(wt_pixels, mt_pixels):
         name_of_higher_mean_embryos = 'wt_mean'
     else:
         name_of_higher_mean_embryos = 'mt_mean'
-    
-    #error code here at y230 -  x473
    
     _, unchecked_p_value = stats.levene(wt_pixels, mt_pixels)
 
@@ -220,9 +173,9 @@ def scan_image_and_process(wt_files, mt_files):
                 p_value, name_of_higher_mean_embryos = var_checked_p_value(wt_image_pixels, mt_image_pixels)
                 if p_value <= 0.05:
                     if name_of_higher_mean_embryos == 'wt_mean':
-                        p_value_mask_array[current_y_axis][current_x_axis] = '#F6D55C' 
-                    else:
                         p_value_mask_array[current_y_axis][current_x_axis] = '#ED553B'
+                    else:
+                        p_value_mask_array[current_y_axis][current_x_axis] = '#F6D55C'
             else:
                 median_diff_array[current_y_axis][current_x_axis] = nan
     

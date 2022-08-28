@@ -70,6 +70,7 @@ def plot3Dp_values(median_diff_array, p_value_mask, elevation, azimuth):
     # Removes x and y ticks and sets z limit.
     ax.set_xticklabels([])
     ax.set_yticklabels([])
+    ax.set_zticklabels([])
     ax.set_zlim(-40,40)
     
     # Sets the distance and rotation of the viewing angle for the plot.
@@ -78,8 +79,8 @@ def plot3Dp_values(median_diff_array, p_value_mask, elevation, azimuth):
     
     # Creates a figure legend
     median_proxy = mpl.lines.Line2D([0],[0], linestyle="none", c='#3CAEA3', marker = 'o')
-    wt_proxy = mpl.lines.Line2D([0],[0], linestyle="none", c='#F6D55C', marker = 'o')
-    mt_proxy = mpl.lines.Line2D([0],[0], linestyle="none", c='#ED553B', marker = 'o')
+    wt_proxy = mpl.lines.Line2D([0],[0], linestyle="none", c='#ED553B', marker = 'o')
+    mt_proxy = mpl.lines.Line2D([0],[0], linestyle="none", c='#F6D55C', marker = 'o')
     ax.legend([median_proxy, wt_proxy, mt_proxy], ['Median Difference', 'WT significance', 'MT signficance'], numpoints = 1, loc='upper left')
 
 
@@ -95,8 +96,8 @@ def plot3Dmedians(wt_median_image, mt_median_image, elevation, azimuth):
     # Applys a gaussian filter to the inputed 2D arrays.
     image_height = len(wt_median_image)
     image_width = len(wt_median_image[0])
-    wt_filtered_image = custom_gaussian_filter(wt_median_image, 4, 4)
-    mt_filtered_image = custom_gaussian_filter(mt_median_image, 4, 4)
+    wt_filtered_image = custom_gaussian_filter(wt_median_image, 1, 4)
+    mt_filtered_image = custom_gaussian_filter(mt_median_image, 1, 4)
 
     # Creates the skeleton of figure, in which we will add plots.
     fig, ax = plt.subplots(subplot_kw={"projection": "3d"}, figsize=(8,6))
@@ -116,7 +117,11 @@ def plot3Dmedians(wt_median_image, mt_median_image, elevation, azimuth):
     
     # Sets the distance and rotation of the viewing angle for the plot - sets z limit.
     ax.dist=7
+    ax.set_xticklabels([])
+    ax.set_yticklabels([])
+    ax.set_zticklabels([])
     ax.set_zlim(0,70)
+    
     ax.view_init(elevation,azimuth)
 
     # Creates a figure legend
