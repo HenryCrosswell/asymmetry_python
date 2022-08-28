@@ -1,7 +1,7 @@
 from cmath import nan
 from random import randint
 import numpy as np
-from asymmetry_python.processing import find_and_add_edge, scan_image_and_process, var_checked_p_value, threshold
+from asymmetry_python.processing import find_and_add_edge, scan_image_and_process, var_checked_p_value, threshold, total_significant_values
 
 def test_scan_image_and_process():
 
@@ -61,7 +61,6 @@ def test_find_and_add_edge():
     image_height = 30
     image_width = 20
     median_diff_array = np.array([[nan for x in range(image_width)] for y in range(image_height)])
-    
     p_value_mask = np.array([['None' for x in range(image_width)] for y in range(image_height)], dtype = object)
 
     for y_index in range(image_height):
@@ -92,3 +91,23 @@ def test_find_and_add_edge():
     assert type(median_diff_array[0][-2]) == np.float64 and median_diff_array[0][-2] != 0
     assert type(median_diff_array[8][-1]) == np.float64 and median_diff_array[8][-1] != 0
 
+def test_total_significant_values():
+    image_height = 10
+    image_width = 5
+
+    median_diff_array = np.array([[nan for x in range(image_width)] for y in range(image_height)])
+    p_value_mask = np.array([['None' for x in range(image_width)] for y in range(image_height)], dtype = object)
+
+    median_diff_array[:,2:] = randint(1,15)
+
+
+    p_value_mask[0,2:] = '#ED553B'
+    p_value_mask[1,2:] = '#F6D55C'
+    p_value_mask[2,2:] = '#ED553B'
+    p_value_mask[3,2:] = '#ED553B'
+    p_value_mask[4,2:] = '#ED553B'
+
+    wt_sig, mt_sig = total_significant_values(p_value_mask, median_diff_array)
+    
+    assert wt_sig == 10
+    assert mt_sig == 40
