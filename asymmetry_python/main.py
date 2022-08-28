@@ -20,7 +20,7 @@ file_save_path = filedialog.askdirectory()
 
 wt_files, mt_files = read_and_sort_files(folder_path)
 median_diff_array, p_value_mask_array, mt_median_image, wt_median_image = scan_image_and_process(wt_files, mt_files)
-
+wt_sig_percentage, mt_sig_percentage = total_significant_values(p_value_mask_array, median_diff_array)
 number = 1
 
 # numbers below are hardcorded angles that present the plots nicely.
@@ -44,7 +44,6 @@ while number != 4:
         med_variable_file_name = 'median_diff_plot_a0_e0.png'
         azimuth = 0
         elevation = 0    
-    wt_sig_percentage, mt_sig_percentage = total_significant_values(p_value_mask_array, median_diff_array)
 
     sleep(0.02) 
     pbar.update(1)
@@ -58,6 +57,6 @@ while number != 4:
 
     number += 1
     
-print(wt_sig_percentage, mt_sig_percentage)
+print('WT significance -', wt_sig_percentage, '%, ', 'MT significance -', mt_sig_percentage, '%')
 print('Figures saved in - ', file_save_path)
 
