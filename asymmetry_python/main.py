@@ -57,6 +57,6 @@ while number != 4:
 
     number += 1
     
-print('WT significance -', wt_sig_percentage, '%, ', 'MT significance -', mt_sig_percentage, '%')
+print(' WT significance -', wt_sig_percentage, '%, MT significance -', mt_sig_percentage, '%')
 print('Figures saved in - ', file_save_path)
 
