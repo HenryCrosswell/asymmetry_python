@@ -4,7 +4,7 @@
 
 Quantifies and plots 3D posterior neural fold asymmetry in confocal images of mice embryos.
 
-| **A representative image**  | **Median differences of both WT and MT embryos** | **Median difference image rotated** | **Areas in which there is significant asymmetry** | **Significant asymmetry image rotated** |
+| **Unprocessed PNP & Distance Map**  | **Median differences of both WT and MT embryos** | **Median difference image rotated** | **Areas in which there is significant asymmetry** | **Significant asymmetry image rotated** |
 | --- | --- | --- | --- | --- |
 | ![](docs/representative_image.png) | ![](docs/med_diff.png) | ![](docs/med_diff_rotated.png) | ![](docs/Sig_image.png) | ![](docs/Sig_rotated.png) |
 
