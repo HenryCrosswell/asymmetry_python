@@ -109,5 +109,5 @@ def test_total_significant_values():
 
     wt_sig, mt_sig = total_significant_values(p_value_mask, median_diff_array)
     
-    assert wt_sig == 10
-    assert mt_sig == 40
+    assert wt_sig == 40
+    assert mt_sig == 10
