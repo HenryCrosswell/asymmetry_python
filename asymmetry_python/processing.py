@@ -113,8 +113,8 @@ def var_checked_p_value(wt_pixels, mt_pixels):
 def total_significant_values(p_value_mask, median_diff_array):
     ''' calculates percentage of WT and MT significance as a percentage of area.'''
 
-    wt_sig_values = len(np.where(p_value_mask == '#F6D55C')[0])
-    mt_sig_values = len(np.where(p_value_mask == '#ED553B')[0])
+    wt_sig_values = len(np.where(p_value_mask == '#ED553B')[0])
+    mt_sig_values = len(np.where(p_value_mask == '#F6D55C')[0])
     total_non_nans = np.count_nonzero(~np.isnan(median_diff_array))
 
     wt_sig_percentage = (wt_sig_values/total_non_nans)*100
