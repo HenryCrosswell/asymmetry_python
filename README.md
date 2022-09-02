@@ -1,3 +1,5 @@
+![Tests](https://github.com/HenryCrosswell/asymmetry_python/actions/workflows/python-package.yml/badge.svg)
+
 # __Plot tissue asymmetry__
 ## __Overview__
 --------
