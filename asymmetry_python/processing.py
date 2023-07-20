@@ -3,12 +3,12 @@ Functions that scan the images and run different calculations on them
 """
 
 from cmath import nan
-from asymmetry_python.loading import image_dimensions, get_pixel_values_from_image_array
+from loading import image_dimensions, get_pixel_values_from_image_array
 import numpy as np
 from scipy import stats
 from time import sleep
 from tqdm import tqdm
-
+from concurrent.futures import ProcessPoolExecutor
 
 def find_and_add_edge(median_diff_array,  p_value_mask, line_width, colour):
     ''' Compares the median difference array against the p value mask, finds the first non-zero value
@@ -141,13 +141,17 @@ def scan_image_and_process(wt_files, mt_files):
     p_value_mask_array = np.array([['None' for x in range(image_width)] for y in range(image_height)], dtype = object)
     print(' Processing files...')
     pbar = tqdm(total = (image_height))
+
+    wt_image_pixels_stack = np.stack(wt_files)
+    mt_image_pixels_stack = np.stack(mt_files)
+
     for current_y_axis in range(image_height):
         sleep(0.02) 
         pbar.update(1)
         for current_x_axis in range(image_width):
-            #returns a list of values at the current x and y coordinate for either the wt or mt images. 
-            wt_image_pixels = get_pixel_values_from_image_array(current_x_axis, current_y_axis, wt_files)
-            mt_image_pixels = get_pixel_values_from_image_array(current_x_axis, current_y_axis, mt_files)
+            
+            wt_image_pixels = wt_image_pixels_stack[:, current_y_axis, current_x_axis].tolist()
+            mt_image_pixels = mt_image_pixels_stack[:, current_y_axis, current_x_axis].tolist()
 
             wt_image_pixels = threshold(wt_image_pixels)
             mt_image_pixels = threshold(mt_image_pixels)
@@ -178,3 +182,28 @@ def scan_image_and_process(wt_files, mt_files):
     
     return median_diff_array, p_value_mask_array, mt_median_image, wt_median_image
 
+def worker(args):
+    a, b = args
+    res1 = a + b
+    res2 = a * b
+
+    return res1, res2
+
+def image_scan_worker(args):
+    a,b = args
+    
+
+def main():
+    args1 = [1, 2, 3, 4]
+    args2 = [5, 6, 7, 8]
+
+    with ProcessPoolExecutor() as executor:
+        result = executor.map(worker, zip(args1, args2))
+
+    a, b = map(list, zip(*result))
+
+    print(a, b)
+
+
+if __name__ == "__main__":
+    main()

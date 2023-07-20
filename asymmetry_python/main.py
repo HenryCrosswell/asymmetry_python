@@ -4,19 +4,28 @@ Main script in which you pick a folder containing pre-labelled, same size images
 
 from plotting import plot3Dp_values, plot3Dmedians
 from tkinter import filedialog
-from asymmetry_python.loading import read_and_sort_files
-from asymmetry_python.processing import scan_image_and_process, total_significant_values
+from loading import read_and_sort_files
+from processing import scan_image_and_process, total_significant_values
 from loading import read_and_sort_files
 from processing import scan_image_and_process, total_significant_values
 import matplotlib.pyplot as plt
 import os
 from time import sleep
+import time 
 from tqdm import tqdm
+from pathlib import Path
+
+start_time = time.time()
 
 print('Select the folder containing your pre-prepared images... ')
-folder_path = filedialog.askdirectory()
+#folder_path = filedialog.askdirectory()
 print('Select the folder where you would like to output the plots... ')
-file_save_path = filedialog.askdirectory()
+#file_save_path = filedialog.askdirectory()
+
+folder_path = Path('C:\\Users\\henry\\OneDrive - University College London\\Coding\\tissue_asymmetry_python\\tests\\data\\')
+file_save_path= Path('C:\\Users\henry\\OneDrive - University College London\\Project Work\\Image Analysis\\Images\\Python Test images\\')
+
+
 
 wt_files, mt_files = read_and_sort_files(folder_path)
 median_diff_array, p_value_mask_array, mt_median_image, wt_median_image = scan_image_and_process(wt_files, mt_files)
@@ -60,3 +69,4 @@ while number != 4:
 print(' WT significance -', wt_sig_percentage, '%, MT significance -', mt_sig_percentage, '%')
 print('Figures saved in - ', file_save_path)
 
+print(f'---- {time.time()-start_time} seconds ----')
