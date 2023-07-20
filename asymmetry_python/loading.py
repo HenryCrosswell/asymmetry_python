@@ -27,24 +27,34 @@ def read_and_sort_files(folder_path):
             mt_list.append(input_image) 
     return wt_list, mt_list
 
-def image_dimensions(list_of_files):
-    """ Recieves an image array and returns how many rows and columns it contains."""
-    first_image = list_of_files[0]
+def image_dimensions(image_array):
+    """Returns the number of rows and columns in the image array.
+
+    Args:
+        image_array (ndarray): Array of images.
+
+    Returns:
+        tuple: Image width and height.
+    """
+    first_image = image_array[0]
     image_height = len(first_image)
     image_width = len(first_image[0])
     return image_width, image_height
 
-def get_pixel_values_from_image_array(x_axis, y_axis, array_of_images):
-    """At a specific XY coordinate in all image arrays, return a list of pixel values at the coordinate, if all values are 0, they are removed.
+def get_pixel_values_from_image_array(x_coord, y_coord, array_of_images):
+    """Returns a list of pixel values at a specific XY coordinate in all image arrays.
 
-    Keyword arguments:
-    x_axis -- the inputed x coordinate
-    y_axis -- the inputed y coordinate
-    array_of_images -- the array of images that will be indexed by the coordinates
+    If all pixel values are 0, they are removed from the list.
+
+    Args:
+        x_coord (int): X-coordinate.
+        y_coord (int): Y-coordinate.
+        array_of_images (list): Array of images.
+
+    Returns:
+        list: List of pixel values at the specified coordinate.
     """
-    result = []
-    for image in array_of_images:
-        result.append(image[y_axis][x_axis])
-        if np.all(result) == 0:
-            result = []
+    result = [image[y_coord, x_coord] for image in array_of_images]
+    if all(value == 0 for value in result):
+        result = []
     return result
