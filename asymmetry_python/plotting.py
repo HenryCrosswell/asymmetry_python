@@ -8,29 +8,45 @@ import matplotlib.pyplot as plt
 from scipy.ndimage import gaussian_filter
 import scipy as sp
 import matplotlib as mpl
-from processing import find_and_add_edge
+from asymmetry_python.processing import find_and_add_edge
+import os
 
 def custom_gaussian_filter(image_array, sigma, truncate):
     """Filters a given array excluding nan values more effectively than the normal gaussian function.
 
-    Keyword arguments:
-    image_array -- the chosen image array that will undergo filtering
-    sigma -- the range at which the filter averages the values
-    truncate -- the decimal places in which the average is cut off at    
+    Args:
+        image_array (ndarray): The chosen image array that will undergo filtering.
+        sigma (float): The range at which the filter averages the values.
+        truncate (float): The decimal places at which the average is cut off.
+
+    Returns:
+        ndarray: The filtered array.
     """
-
-    image_np_array = np.array(image_array)
-    copy_of_np_array=image_np_array.copy()
-    copy_of_np_array[np.isnan(image_np_array)]=0
-    gaussian_filter_of_original_array=sp.ndimage.gaussian_filter(copy_of_np_array,sigma=sigma,truncate=truncate)
-
-    non_zero_np_array=0*image_np_array.copy()+1
-    non_zero_np_array[np.isnan(image_np_array)]=0
-    gaussian_filter_of_non_zero_array=sp.ndimage.gaussian_filter(non_zero_np_array,sigma=sigma,truncate=truncate)
-
-    combination_of_arrays = gaussian_filter_of_original_array/gaussian_filter_of_non_zero_array
-
+    # Create a mask of non-nan values
+    valid_mask = ~np.isnan(image_array)
+    
+    # Create a copy of the input array and set nan values to zero
+    image_copy = np.array(image_array)
+    image_copy[np.isnan(image_array)] = 0
+    
+    # Apply Gaussian filter on the masked copy of the array
+    gaussian_filter_of_original_array = gaussian_filter(image_copy, sigma=sigma, truncate=truncate)
+    
+    # Apply Gaussian filter on the mask to get the count of non-nan values at each location
+    gaussian_filter_of_non_zero_array = gaussian_filter(valid_mask.astype(np.float32), sigma=sigma, truncate=truncate)
+    
+    # Avoid division by zero and apply the filter
+    combination_of_arrays = np.divide(gaussian_filter_of_original_array, gaussian_filter_of_non_zero_array, out=np.zeros_like(image_array), where=gaussian_filter_of_non_zero_array != 0)
+    
     return combination_of_arrays
+
+def create_plots(median_diff_array, p_value_mask_array, mt_median_image, wt_median_image, file_save_path, elevation, azimuth):
+    plot3Dp_values(median_diff_array, p_value_mask_array, elevation, azimuth)
+    plt.savefig(os.path.join(file_save_path, f'none_my_plot_a{azimuth}_e{elevation}.png'), dpi=300)
+
+    plot3Dmedians(wt_median_image, mt_median_image, elevation, azimuth)
+    plt.savefig(os.path.join(file_save_path, f'bigmedian_diff_plot_a{azimuth}_e{elevation}.png'), dpi=300)
+
 
 def plot3Dp_values(median_diff_array, p_value_mask, elevation, azimuth):
     """Surface plots the difference in median values onto an X,Y,Z axis, smooths the image and extends the Y axis to a representitive size. 
