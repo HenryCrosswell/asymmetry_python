@@ -13,19 +13,13 @@ import os
 from time import sleep
 import time 
 from tqdm import tqdm
-from pathlib import Path
 
 start_time = time.time()
 
 print('Select the folder containing your pre-prepared images... ')
-#folder_path = filedialog.askdirectory()
+folder_path = filedialog.askdirectory()
 print('Select the folder where you would like to output the plots... ')
-#file_save_path = filedialog.askdirectory()
-
-folder_path = Path('C:\\Users\\henry\\OneDrive - University College London\\Coding\\tissue_asymmetry_python\\tests\\data\\')
-file_save_path= Path('C:\\Users\henry\\OneDrive - University College London\\Project Work\\Image Analysis\\Images\\Python Test images\\')
-
-
+file_save_path = filedialog.askdirectory()
 
 wt_files, mt_files = read_and_sort_files(folder_path)
 median_diff_array, p_value_mask_array, mt_median_image, wt_median_image = scan_image_and_process(wt_files, mt_files)
