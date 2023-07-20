@@ -5,8 +5,6 @@ Functions to facilitate the loading and sorting of images
 from skimage.io import imread
 from pathlib import Path
 from os import listdir
-import numpy as np
-from time import sleep
 from tqdm import tqdm
 
 def read_and_sort_files(folder_path):
@@ -16,7 +14,6 @@ def read_and_sort_files(folder_path):
     mt_list = []
     wt_list = []
     for file_path in listdir(folder_path):
-        sleep(0.02) 
         pbar.update(1)
         input_image = imread(Path(folder_path, file_path)) 
         if file_path[:2] == "WT":

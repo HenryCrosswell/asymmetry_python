@@ -6,7 +6,6 @@ from cmath import nan
 from loading import image_dimensions, get_pixel_values_from_image_array
 import numpy as np
 from scipy import stats
-from time import sleep
 from tqdm import tqdm
 from concurrent.futures import ProcessPoolExecutor
 import os

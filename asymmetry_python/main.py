@@ -5,7 +5,6 @@ Main script in which you pick a folder containing pre-labelled, same size images
 from plotting import create_plots
 from loading import read_and_sort_files
 from processing import scan_image_and_process, total_significant_values
-from time import sleep
 import time 
 from tqdm import tqdm
 from pathlib import Path
@@ -39,7 +38,6 @@ if __name__ == '__main__':
     print('Creating plots...')
     with tqdm(total=6) as pbar:
         for number, (azimuth, elevation) in azimuth_elevation_mapping.items():
-            sleep(0.02) 
             pbar.update(1)
             create_plots(median_diff_array, p_value_mask_array, mt_median_image, wt_median_image, file_save_path, elevation, azimuth)
 
