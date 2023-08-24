@@ -53,7 +53,7 @@ if __name__ == '__main__':
     # The total amount of graphs with 3 azimuth nad elevation maps is 6, since create plots creates two different plots.
     with tqdm(total=6) as pbar:
         for number, (azimuth, elevation) in azimuth_elevation_mapping.items():
-            pbar.update(1)
+            pbar.update(2)
             logging.info(f'Creating plots, viewed at azimuth : {azimuth} and elevation : {elevation}...')
             create_plots(median_diff_array, p_value_mask_array, mt_median_image, wt_median_image, file_save_path, elevation, azimuth)
 

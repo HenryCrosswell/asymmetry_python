@@ -10,75 +10,11 @@ from tqdm import tqdm
 from concurrent.futures import ProcessPoolExecutor
 import os
 
-def find_and_add_edge(median_diff_array, p_value_mask, line_width, colour):
-    """Compares the median difference array against the p value mask, finds the first non-zero value
-    and replaces the value added with "line_width" with either a colour or a value, depending on the array type.
-    Returns the same arrays, but with a highlighted edge.
-
-    Args:
-        median_diff_array (ndarray): Filtered median difference array.
-        p_value_mask (ndarray): Mask for median difference array, with p-values coloured depending on WT or MT.
-        line_width (int): Size of edge.
-        colour (str): Colour of edge.
-
-    Returns:
-        tuple: Updated p_value_mask and median_diff_array.
-    """
-
-    first_y_axis_line = True
-    previous_first_right_value_index = -1
-    previous_first_left_value_index = -1
-    for y_axis in range(len(median_diff_array)): 
-
-        non_nan_indices = np.where(~np.isnan(median_diff_array[y_axis])) 
-        if len(non_nan_indices[0]) != 0:
-            first_left_value_index = non_nan_indices[0][-1]
-            first_right_value_index = non_nan_indices[0][0]
-            left_edge = first_left_value_index + line_width
-
-            right_edge = first_right_value_index - line_width 
-
-            #paints first line
-            if first_y_axis_line == True:
-                left_index_of_first_line = first_left_value_index
-                p_value_mask[y_axis,right_edge:left_edge] = colour
-                first_y_axis_line = False
-                previous_first_right_value_index = first_right_value_index
-                previous_first_left_value_index = first_left_value_index
-                continue
-
-            #right edge
-            if first_y_axis_line == False:
-                p_value_mask[y_axis,right_edge:max(previous_first_right_value_index, first_right_value_index)] = colour
-                
-            # left edge
-            if first_left_value_index >= left_index_of_first_line and y_axis < 1000:
-                p_value_mask[y_axis,min(previous_first_left_value_index, first_left_value_index):left_edge] = colour
-            
-            # embryo close to right border of image
-            if first_right_value_index <= line_width:
-                p_value_mask[y_axis,0:line_width] = colour
-
-            previous_first_right_value_index = first_right_value_index
-            previous_first_left_value_index = first_left_value_index
-
-    # hack to deal with weird green values inside embryo:
-    # replace the p value mask where it is green with nan for the problematic region
-    p_value_mask[300:600, 300:500] = np.where(p_value_mask[300:600, 300:500]==colour, "None", p_value_mask[300:600, 300:500])
-    
-    # draw bottom line
-    bottom_line = 1796
-    bottom_offset = 3
-    p_value_mask[bottom_line:bottom_line+bottom_offset,previous_first_right_value_index:499] = colour
-
-    return p_value_mask, median_diff_array
-
 def threshold(list_of_pixel_values):
     """Checks the list and returns it if there are no outliers, otherwise, returns an empty list.
 
     Args:
         list_of_pixel_values (list): List of pixel values.
-
     Returns:
         list: List of pixel values if no outliers, otherwise an empty list.
     """
@@ -100,7 +36,6 @@ def var_checked_p_value(wt_pixels, mt_pixels):
     Args:
         wt_pixels (list): A list of pixel values at a specific coordinate from the WT images.
         mt_pixels (list): A list of pixel values at a specific coordinate from the MT images.
-
     Returns:
         tuple: P_value and name_of_higher_mean_embryos.
     """
@@ -125,7 +60,6 @@ def total_significant_values(p_value_mask, median_diff_array):
     Args:
         p_value_mask (ndarray): P-value mask array.
         median_diff_array (ndarray): Median difference array.
-
     Returns:
         tuple: Percentage of WT and MT significance.
     """
@@ -151,7 +85,6 @@ def process_chunk(chunk):
 
     Args:
         chunk (tuple): A tuple containing y_start, y_end, image_width, wt_files_chunk, and mt_files_chunk.
-
     Returns:
         tuple: Results of the processing for the chunk.
     """
@@ -200,12 +133,12 @@ def process_chunk(chunk):
     return median_diff_array_chunk, p_value_mask_array_chunk, mt_median_image_chunk, wt_median_image_chunk
 
 def scan_image_and_process(wt_files, mt_files):
-    """Scans the images and runs different calculations on them.
+    """
+    Scans the images and runs different calculations on them.
 
     Args:
-        wt_files (list): List of WT image file paths.
-        mt_files (list): List of MT image file paths.
-
+        wt_files : List of WT image file paths.
+        mt_files : List of MT image file paths.
     Returns:
         tuple: Median difference array, p-value mask array, MT median image, and WT median image.
     """
@@ -229,3 +162,73 @@ def scan_image_and_process(wt_files, mt_files):
     wt_median_image = np.vstack(wt_median_image_list)
 
     return median_diff_array, p_value_mask_array, mt_median_image, wt_median_image
+
+
+def find_and_add_edge(median_diff_array, p_value_mask, line_width, colour):
+    """
+    Compares the median difference array against the p value mask, finds the first non-zero value
+    and replaces the value added with "line_width" with either a colour or a value, depending on the array type.
+    Returns the same arrays, but with a highlighted edge.
+
+    Args:
+        median_diff_array : Filtered median difference array.
+        p_value_mask : Coloured mask for median difference array, with p-values coloured depending on WT or MT.
+        line_width : Size of edge.
+        colour : Colour of edge.
+    Returns:
+        tuple: Updated p_value_mask and median_diff_array.
+    """
+
+    first_y_axis_line = True
+    image_height = len(median_diff_array) 
+    previous_first_right_value_index = -1
+    previous_first_left_value_index = -1
+
+    for y_axis in range(image_height): 
+
+        # Returns all non_nan_indices in the current y_axis and continues if all are nan.
+        non_nan_indices = np.where(~np.isnan(median_diff_array[y_axis]))
+        if non_nan_indices[0].size == 0:
+            continue
+
+        first_left_value_index = non_nan_indices[0][-1]
+        first_right_value_index = non_nan_indices[0][0]
+        left_edge = first_left_value_index + line_width
+        right_edge = first_right_value_index - line_width 
+
+        # If this y-axis is the first to contain a non_nan_index, it paints the first line.
+        if first_y_axis_line == True:
+            first_y_axis_line = False
+
+            left_index_of_first_line = first_left_value_index
+            p_value_mask[y_axis,right_edge:left_edge] = colour
+            previous_first_right_value_index = first_right_value_index
+            previous_first_left_value_index = first_left_value_index
+
+            continue
+
+        # Right edge
+        if first_y_axis_line == False:
+            p_value_mask[y_axis,right_edge:max(previous_first_right_value_index, first_right_value_index)] = colour
+            
+        # Left edge
+        if first_left_value_index >= left_index_of_first_line and y_axis < 1000:
+            p_value_mask[y_axis,min(previous_first_left_value_index, first_left_value_index):left_edge] = colour
+        
+        # Embryo close to right border of image
+        if first_right_value_index <= line_width:
+            p_value_mask[y_axis,0:line_width] = colour
+
+        previous_first_right_value_index = first_right_value_index
+        previous_first_left_value_index = first_left_value_index
+
+    # hack to deal with weird green values inside embryo:
+    # replace the p value mask where it is green with nan for the problematic region
+    p_value_mask[300:600, 300:500] = np.where(p_value_mask[300:600, 300:500]==colour, "None", p_value_mask[300:600, 300:500])
+    
+    # draw bottom line
+    bottom_line = 1796
+    bottom_offset = 3
+    p_value_mask[bottom_line:bottom_line+bottom_offset,previous_first_right_value_index:499] = colour
+
+    return p_value_mask, median_diff_array
