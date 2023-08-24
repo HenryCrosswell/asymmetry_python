@@ -2,7 +2,6 @@
 
 # __Plot tissue asymmetry__
 ## __Overview__
---------
 
 Quantifies and plots 3D posterior neural fold asymmetry in confocal images of mice embryos.
 
@@ -17,7 +16,6 @@ author: Henry Crosswell
 ----------------------------------
 
 ## __Usage:__
----
 Disclaimer: 
 This technique has only been tested on confocal images of the posterior neural folds of E9 mice. 
 
@@ -47,9 +45,9 @@ conda env create
 ```
 conda activate asymmetry
 ```
-3. Install `plot_tissue_asymmetry` next.
+3. Install `tissue_asymmetry_python` next.
 ```
-pip install plot_tissue_asymmetry
+pip install tissue_asymmetry_python
 ``` 
 
 ## Step 2.5 - customise main.py
@@ -69,6 +67,6 @@ Now follow the steps prompted by the terminal.
 
 ## Contributors
 ------------
-
+Henry Crosswell
 Dr. Alessandro Felder 
 
