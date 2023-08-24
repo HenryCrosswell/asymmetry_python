@@ -38,10 +38,10 @@ def read_and_sort_files(folder_path):
                 mt_list.append(input_image) 
 
     except ValueError as e:
-        logging.error(f'Unexpected value encountered : {e}')
+        logging.ERROR(f'Unexpected value encountered : {e}')
 
     except Exception as e:
-        logging.error(f'An error has occured : {e}')
+        logging.ERROR(f'An error has occured : {e}')
 
     return wt_list, mt_list
 
@@ -73,9 +73,11 @@ def get_pixel_values_from_image_array(x_coord, y_coord, array_of_images):
     Returns:
         result : List of pixel values at the specified coordinate.
     """
-
-    result = [image[y_coord, x_coord] for image in array_of_images]
-    if all(value == 0 for value in result):
-        result = []
+    try:
+        result = [image[y_coord, x_coord] for image in array_of_images]
+        if all(value == 0 for value in result):
+            result = []
+    except ValueError as e:
+        logging.ERROR(f'An error has occured : {e}')
 
     return result
