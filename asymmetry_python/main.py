@@ -1,7 +1,6 @@
 """
 Main script in which you pick a folder containing pre-labelled, same size images. 
 """
-
 from plotting import create_plots
 from loading import read_and_sort_files
 from processing import scan_image_and_process, total_significant_values
@@ -17,7 +16,7 @@ if __name__ == '__main__':
     start_time = time.time()
 
     print('Select the folder containing your pre-prepared images... ')
-    folder_path = Path('C:\\Users\\henry\\OneDrive - University College London\\Coding\\tissue_asymmetry_python\\tests\\data\\')
+    folder_path = Path('C:\\Users\\henry\\OneDrive - University College London\\Coding\\tissue_asymmetry_python\\asymmetry_python\\tests\\data\\')
     print('Select the folder where you would like to output the plots... ')
     file_save_path = Path('C:\\Users\henry\\OneDrive - University College London\\Project Work\\Image Analysis\\Images\\Python Test images\\')
 
