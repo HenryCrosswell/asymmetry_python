@@ -1,6 +1,7 @@
 import numpy as np
 from loading import image_dimensions, read_and_sort_files, get_pixel_values_from_image_array
 import pytest
+from pathlib import Path
 
 def test_image_dimensions():
     test_image_list = [np.ones(shape=(3, 4)), np.ones(shape=(3, 4))]
@@ -9,7 +10,8 @@ def test_image_dimensions():
     assert height == 3
 
 def test_read_and_sort_files():
-    test_folder_path = "tests/data"
+    test_folder_path = Path(__file__).parent / "data"
+    wt_list, mt_list = read_and_sort_files(test_folder_path)
     wt_list, mt_list = read_and_sort_files(test_folder_path)
     assert len(mt_list) == 2
     assert len(wt_list) == 2
