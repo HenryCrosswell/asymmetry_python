@@ -14,7 +14,6 @@ def read_and_sort_files(folder_path):
     
     Args:
         folder_path : The location of all images to be analysed, both WT and mutant genotypes.
-
     Returns as tuple:
         wt_list : Images with WT prefix are sorted into this list.
         mt_list : All other images except CF+ are sorted into this list.
@@ -52,12 +51,11 @@ def image_dimensions(image_array):
 
     Args:
         image_array : Array of images.
-
     Returns: 
         tuple : Image width and height.
     """
 
-    first_image = image_array[0]
+    first_image = image_array[0]   
     image_height = len(first_image)
     image_width = len(first_image[0])
 
@@ -72,7 +70,6 @@ def get_pixel_values_from_image_array(x_coord, y_coord, array_of_images):
         x_coord : Current X-coordinate iteration.
         y_coord : Current Y-coordinate iteration.
         array_of_images : Array of images.
-
     Returns:
         result : List of pixel values at the specified coordinate.
     """
