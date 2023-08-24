@@ -11,7 +11,8 @@ from concurrent.futures import ProcessPoolExecutor
 import os
 
 def threshold(list_of_pixel_values):
-    """Checks the list and returns it if there are no outliers, otherwise, returns an empty list.
+    """
+    Checks the list and returns it if there are no outliers, otherwise, returns an empty list.
 
     Args:
         list_of_pixel_values (list): List of pixel values.
