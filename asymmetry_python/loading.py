@@ -28,13 +28,13 @@ def read_and_sort_files(folder_path):
 
     try:
         for file_path in listdir(folder_path):
+            if file_path == '.DS_Store':
+                continue
             pbar.update(1)
             input_image = imread(os.path.join(folder_path, file_path)) 
             if file_path[:2] == "WT":
                 wt_list.append(input_image) 
             elif file_path[:3] == "CF+":
-                continue
-            elif file_path == '.DS_Store':
                 continue
             else:
                 mt_list.append(input_image) 
