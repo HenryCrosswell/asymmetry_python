@@ -78,7 +78,7 @@ def test_var_checked_p_value():
 
 
 def test_find_and_add_edge():
-
+    # Arrays visualised to be clearer
     median_diff_array = np.array([[nan, nan, nan, nan, nan],
                                   [nan, nan, 1, 1, 1],
                                   [nan, nan, 2, 2, 2],
@@ -124,7 +124,6 @@ def test_total_significant_values():
     p_value_mask = np.array([['None' for x in range(image_width)] for y in range(image_height)], dtype = object)
 
     median_diff_array[:,2:] = randint(1,15)
-
 
     p_value_mask[0,2:] = '#ED553B'
     p_value_mask[1,2:] = '#F6D55C'
