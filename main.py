@@ -1,12 +1,11 @@
 """
 Main script in which you pick a folder containing pre-labelled, same size images. 
 """
-from plotting import create_plots
-from loading import read_and_sort_files
-from processing import scan_image_and_process, total_significant_values
+from asymmetry_python.plotting import create_plots
+from asymmetry_python.loading import read_and_sort_files
+from asymmetry_python.processing import scan_image_and_process, total_significant_values
 import time 
 from tqdm import tqdm
-from pathlib import Path
 from multiprocessing import freeze_support
 import warnings
 import logging
