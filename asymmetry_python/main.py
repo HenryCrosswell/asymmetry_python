@@ -11,22 +11,24 @@ from multiprocessing import freeze_support
 import warnings
 import logging
 from tkinter import filedialog
+import os
 
 if __name__ == '__main__':
     freeze_support()
-    logging.basicConfig(filename='log_file.txt', level=logging.INFO)
+    logging.basicConfig(filename='log_file.txt', level=logging.ERROR)
     start_time = time.time()
+    script_dir = os.path.dirname(os.path.abspath(__file__))
 
     # Interactive selection of a folder containing images to analyse and a folder to save the images.
     try:
         print('Select the folder containing your pre-processed images... ')
         # folder_path = filedialog.askdirectory(title="Select folder containing images")
-        folder_path = Path('C:\\Users\\henry\\OneDrive - University College London\\Coding\\tissue_asymmetry_python\\asymmetry_python\\tests\\data\\')
+        folder_path = os.path.join(script_dir, 'tests/data')
         print(f"Selected folder: {folder_path}")
 
         print('Select the folder where you would like to output the plots... ')
-        # folder_path = filedialog.askdirectory(title="Select folder for results")
-        file_save_path = Path('C:\\Users\henry\\OneDrive - University College London\\Project Work\\Image Analysis\\Images\\Python Test images\\')
+        # file_save_path = filedialog.askdirectory(title="Select folder for results")
+        file_save_path = os.path.join(script_dir, 'tests/test_save')
         print(f"Selected folder to save results in : {file_save_path}")
 
     except FileNotFoundError as e:
@@ -37,6 +39,7 @@ if __name__ == '__main__':
 
     # This function requires images to be named correctly, wild-type images prefixed with WT.
     wt_files_list, mt_files_list = read_and_sort_files(folder_path)
+    print(wt_files_list, mt_files_list)
 
     with warnings.catch_warnings():
         median_diff_array, p_value_mask_array, mt_median_image, wt_median_image = scan_image_and_process(wt_files_list, mt_files_list)

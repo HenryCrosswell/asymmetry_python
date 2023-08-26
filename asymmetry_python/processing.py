@@ -3,15 +3,15 @@ Functions that scan the images and run different calculations on them
 """
 
 from cmath import nan
-from loading import image_dimensions, get_pixel_values_from_image_array
+from asymmetry_python.loading import image_dimensions, get_pixel_values_from_image_array
 import numpy as np
 from scipy import stats
 from tqdm import tqdm
 from concurrent.futures import ProcessPoolExecutor
-import os
 
 def threshold(list_of_pixel_values):
-    """Checks the list and returns it if there are no outliers, otherwise, returns an empty list.
+    """
+    Checks the list and returns it if there are no outliers, otherwise, returns an empty list.
 
     Args:
         list_of_pixel_values (list): List of pixel values.
@@ -73,7 +73,6 @@ def total_significant_values(p_value_mask, median_diff_array):
 
     # Calculate total non-NaN elements in median_diff_array
     total_non_nans = np.count_nonzero(~np.isnan(median_diff_array))
-
     # Calculate percentages
     wt_sig_percentage = (wt_sig_count / total_non_nans) * 100
     mt_sig_percentage = (mt_sig_count / total_non_nans) * 100
@@ -202,6 +201,7 @@ def find_and_add_edge(median_diff_array, p_value_mask, line_width, colour):
 
             left_index_of_first_line = first_left_value_index
             p_value_mask[y_axis,right_edge:left_edge] = colour
+
             previous_first_right_value_index = first_right_value_index
             previous_first_left_value_index = first_left_value_index
 
@@ -210,11 +210,11 @@ def find_and_add_edge(median_diff_array, p_value_mask, line_width, colour):
         # Right edge
         if first_y_axis_line == False:
             p_value_mask[y_axis,right_edge:max(previous_first_right_value_index, first_right_value_index)] = colour
-            
+
         # Left edge
         if first_left_value_index >= left_index_of_first_line and y_axis < 1000:
             p_value_mask[y_axis,min(previous_first_left_value_index, first_left_value_index):left_edge] = colour
-        
+
         # Embryo close to right border of image
         if first_right_value_index <= line_width:
             p_value_mask[y_axis,0:line_width] = colour

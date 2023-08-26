@@ -6,7 +6,6 @@ import numpy as np
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
 from scipy.ndimage import gaussian_filter
-import scipy as sp
 import matplotlib as mpl
 from asymmetry_python.processing import find_and_add_edge
 import os
