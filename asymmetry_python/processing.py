@@ -3,7 +3,7 @@ Functions that scan the images and run different calculations on them
 """
 
 from cmath import nan
-from loading import image_dimensions, get_pixel_values_from_image_array
+from asymmetry_python.loading import image_dimensions, get_pixel_values_from_image_array
 import numpy as np
 from scipy import stats
 from tqdm import tqdm

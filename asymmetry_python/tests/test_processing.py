@@ -1,7 +1,7 @@
 from cmath import nan
 from random import randint
 import numpy as np
-from processing import find_and_add_edge, scan_image_and_process, var_checked_p_value, threshold, total_significant_values
+from ..processing import find_and_add_edge, scan_image_and_process, var_checked_p_value, threshold, total_significant_values
 
 def test_scan_image_and_process():
 

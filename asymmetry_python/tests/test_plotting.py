@@ -1,6 +1,6 @@
 from cmath import nan
 import numpy as np
-from plotting import gaussian_filter, plot3Dp_values
+from ..plotting import gaussian_filter, plot3Dp_values
 import pytest
 
 def test_gaussian_filter():
