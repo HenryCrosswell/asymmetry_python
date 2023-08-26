@@ -203,6 +203,7 @@ def find_and_add_edge(median_diff_array, p_value_mask, line_width, colour):
 
             left_index_of_first_line = first_left_value_index
             p_value_mask[y_axis,right_edge:left_edge] = colour
+
             previous_first_right_value_index = first_right_value_index
             previous_first_left_value_index = first_left_value_index
 
@@ -211,11 +212,11 @@ def find_and_add_edge(median_diff_array, p_value_mask, line_width, colour):
         # Right edge
         if first_y_axis_line == False:
             p_value_mask[y_axis,right_edge:max(previous_first_right_value_index, first_right_value_index)] = colour
-            
+
         # Left edge
         if first_left_value_index >= left_index_of_first_line and y_axis < 1000:
             p_value_mask[y_axis,min(previous_first_left_value_index, first_left_value_index):left_edge] = colour
-        
+
         # Embryo close to right border of image
         if first_right_value_index <= line_width:
             p_value_mask[y_axis,0:line_width] = colour

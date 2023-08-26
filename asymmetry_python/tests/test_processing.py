@@ -33,15 +33,15 @@ def test_scan_image_and_process():
                        [0, 5, 5],
                        [0, 15, 15]])
     
-    expected = np.array([[nan, nan, nan],
-                         [nan, 2, 2],
-                         [nan, 3, 3],
-                         [nan, 10, 10]])
+    expected_median_array = np.array([[nan, nan, nan],
+                                      [nan, 2, 2],
+                                      [nan, 3, 3],
+                                      [nan, 10, 10]])
     
     test_image_list = [image1, image2]
     median_diff_array, p_value_mask_array, test_median_image, wt_median_image = scan_image_and_process(test_image_list, test_image_list)
     test_median_image = np.array(test_median_image)
-    assert np.allclose(test_median_image, expected, equal_nan=True)
+    assert np.allclose(test_median_image, expected_median_array, equal_nan=True)
 
 def test_threshold():
     list_of_pixel_values = []
@@ -79,36 +79,33 @@ def test_var_checked_p_value():
 
 def test_find_and_add_edge():
 
-    median_diff_array = np.array([[0, 0, 0, 0, 0],
-                                  [0, 0, 1, 1, 1],
-                                  [0, 0, 2, 2, 2],
-                                  [0, 0, 3, 3, 3],
-                                  [0, 0, 3, 3, 3],
-                                  [0, 0, 3, 3, 3]])
+    median_diff_array = np.array([[nan, nan, nan, nan, nan],
+                                  [nan, nan, 1, 1, 1],
+                                  [nan, nan, 2, 2, 2],
+                                  [nan, nan, 3, 3, 3],
+                                  [nan, nan, 3, 3, 3],
+                                  [nan, nan, 3, 3, 3]])
     
-    expected_diff_array = np.array([[0, 0, 0, 0, 0],
-                                    [0, 0, 1, 1, 1],
-                                    [0, 0, 2, 2, 2],
-                                    [0, 0, 3, 3, 3],
-                                    [0, 0, 3, 3, 3],
-                                    [0, 0, 3, 3, 3]])
+    expected_diff_array = np.array([[nan, nan, nan, nan, nan],
+                                    [nan, nan, 1, 1, 1],
+                                    [nan, nan, 2, 2, 2],
+                                    [nan, nan, 3, 3, 3],
+                                    [nan, nan, 3, 3, 3],
+                                    [nan, nan, 3, 3, 3]])
 
     p_value_mask = np.array([['None', 'None', 'None', 'None', 'None'],
                              ['None', 'None', 'pval', 'pval', 'pval'],
                              ['None', 'None', 'pval', 'pval', 'pval'],
                              ['None', 'None', 'pval', 'pval', 'pval'],
                              ['None', 'None', 'pval', 'pval', 'pval'],
-                             ['None', 'None', 'pval', 'pval', 'pval']])
+                             ['None', 'None', 'pval', 'pval', 'pval']], dtype= 'U7')
     
     expected_mask = np.array([['None', 'None', 'None', 'None', 'None'],
-                              ['None', 'None', '#3CAEA3', '#3CAEA3', '#3CAEA3'],
-                              ['None', 'None', '#3CAEA3', 'pval', 'pval'],
-                              ['None', 'None', '#3CAEA3', 'pval', 'pval'],
-                              ['None', 'None', '#3CAEA3', 'pval', 'pval'],
-                              ['None', 'None', '#3CAEA3', 'pval', 'pval']])
-    
-    
-    
+                              ['None', '#3CAEA3', '#3CAEA3', '#3CAEA3', '#3CAEA3'],
+                              ['None', '#3CAEA3', 'pval', 'pval', '#3CAEA3'],
+                              ['None', '#3CAEA3', 'pval', 'pval', '#3CAEA3'],
+                              ['None', '#3CAEA3', 'pval', 'pval', '#3CAEA3'],
+                              ['None', '#3CAEA3', 'pval', 'pval', '#3CAEA3']], dtype= 'U7')
 
     p_value_mask, median_diff_array = find_and_add_edge(median_diff_array,  p_value_mask, 1, '#3CAEA3')
 
@@ -116,12 +113,8 @@ def test_find_and_add_edge():
     assert len(p_value_mask[0]) == 5
     assert len(median_diff_array) == 6
     assert len(median_diff_array[0]) == 5
-    print(median_diff_array)
-    print(expected_diff_array)
-    print(p_value_mask)
-    print(expected_mask)
-    assert np.array_equal(median_diff_array, expected_diff_array)
     assert np.array_equal(p_value_mask, expected_mask)
+    assert np.allclose(median_diff_array, expected_diff_array, equal_nan=True)
 
 def test_total_significant_values():
     image_height = 10
