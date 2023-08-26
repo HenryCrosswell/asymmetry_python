@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 from scipy.ndimage import gaussian_filter
 import scipy as sp
 import matplotlib as mpl
-from asymmetry_python.processing import find_and_add_edge
+from processing import find_and_add_edge
 import os
 
 def custom_gaussian_filter(image_array, sigma, truncate):
