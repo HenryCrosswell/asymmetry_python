@@ -8,7 +8,6 @@ import numpy as np
 from scipy import stats
 from tqdm import tqdm
 from concurrent.futures import ProcessPoolExecutor
-import os
 
 def threshold(list_of_pixel_values):
     """
@@ -74,7 +73,6 @@ def total_significant_values(p_value_mask, median_diff_array):
 
     # Calculate total non-NaN elements in median_diff_array
     total_non_nans = np.count_nonzero(~np.isnan(median_diff_array))
-
     # Calculate percentages
     wt_sig_percentage = (wt_sig_count / total_non_nans) * 100
     mt_sig_percentage = (mt_sig_count / total_non_nans) * 100

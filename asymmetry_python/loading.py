@@ -34,14 +34,16 @@ def read_and_sort_files(folder_path):
                 wt_list.append(input_image) 
             elif file_path[:3] == "CF+":
                 continue
+            elif file_path == '.DS_Store':
+                continue
             else:
                 mt_list.append(input_image) 
 
     except ValueError as e:
-        logging.ERROR(f'Unexpected value encountered : {e}')
+        logging.error(f'Unexpected value encountered : {e}')
 
     except Exception as e:
-        logging.ERROR(f'An error has occured : {e}')
+        logging.error(f'An error has occured : {e}')
 
     return wt_list, mt_list
 
@@ -78,6 +80,6 @@ def get_pixel_values_from_image_array(x_coord, y_coord, array_of_images):
         if all(value == 0 for value in result):
             result = []
     except ValueError as e:
-        logging.ERROR(f'An error has occured : {e}')
+        logging.error(f'An error has occured : {e}')
 
     return result
