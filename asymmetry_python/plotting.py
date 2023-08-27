@@ -40,16 +40,12 @@ def custom_gaussian_filter(image_array, sigma = 4, truncate = 4):
 
     # Divide the filtered array by the Gaussian-filtered non-zero count array
     combination_of_arrays = gaussian_filter_of_original_array / gaussian_filter_of_non_zero_array
-
-    print(combination_of_arrays)
     
     return combination_of_arrays
 
-
-
 def create_plots(
         median_diff_array, p_value_mask_array, mt_median_image, wt_median_image, 
-        file_save_path, elevation, azimuth, dpi, edge_colour, edge_line_width):
+        file_save_path, elevation, azimuth, dpi, edge_colour, edge_line_width = 5):
     """
     From four different 2D arrays this function creates two 3D plots, edited by some parameters.
     One of the significant P_values masking the the median_diff_array, showing signficance where WT is compared with MT, 
@@ -65,6 +61,8 @@ def create_plots(
         elevation : This value represents the vertical rotation of the viewed and saved image.
         azimuth : This value represents the horizontal rotation of the viewed and saved image.
         dpi : dots per inch - a measure of the images' quality.
+        edge_colour : Chosen colour for the line drawn around the edge of the average PNPs.
+        edge_line_width: Thickness of line drawn, defualt 5px.
 
     Returns:
         p_value_plot : 3D plot of the median diff array with areas highlighted to display genotypes significant tissue asymmetry.
@@ -78,7 +76,7 @@ def create_plots(
     plt.savefig(os.path.join(file_save_path, f'median_plot_a{azimuth}_e{elevation}.png'), dpi=dpi)
 
 
-def plot3Dp_values(median_diff_array, p_value_mask, elevation, azimuth, edge_colour, edge_line_width = 5):
+def plot3Dp_values(median_diff_array, p_value_mask, elevation, azimuth, edge_colour, edge_line_width):
     """
     Surface plots the difference in median values onto an X,Y,Z axis, smooths the image and extends the Y axis to a representitive size. 
     Following this, applys either a Red mask if the P_value for the mutant is significant, or a Blue mask if the wild-type is significant.
@@ -89,13 +87,13 @@ def plot3Dp_values(median_diff_array, p_value_mask, elevation, azimuth, edge_col
     elevation : This value represents the vertical rotation of the viewed image.
     azimuth : This value represents the horizontal rotation of the viewed image.
     edge_colour : Chosen colour for the line drawn around the edge of the average PNPs.
-    edge_line_width: Thickness of line drawn, defualt 5px.
+    edge_line_width: Thickness of line drawn.
     """
 
-    # Applys a gaussian filter to the inputed 2D arrays - also finds the edge and applys that to the image.
     image_height = len(median_diff_array)
     image_width = len(median_diff_array[0])
-
+    
+    # Applys a gaussian filter to the inputed 2D arrays - also finds the edge and applys that to the image.
     # Using default settings as it helps smooth without creating new data when using large images.
     median_diff_array = custom_gaussian_filter(median_diff_array)
     p_value_mask, median_diff_edge_array = find_and_add_edge(median_diff_array,  p_value_mask, edge_line_width, edge_colour)
@@ -111,12 +109,13 @@ def plot3Dp_values(median_diff_array, p_value_mask, elevation, azimuth, edge_col
     # Stretches plot along the Y axis by a determined scale factor - makes it more representative.
     ax.get_proj = lambda: np.dot(Axes3D.get_proj(ax), np.diag([0.4, 1.0, 0.4, 1]))
 
+    # creates two masks, one with colour in locations whith  that colour and nothing else, the other matches everything else other than that colour
+    first_colour_entries = np.where(p_value_mask=='#3CAEA3', p_value_mask, "None")
+    all_non_first_colour_entries = np.where(p_value_mask=='#3CAEA3', "None", p_value_mask)
+
     # Fills the skeleton with a surface plot, with the Z axis being the med. diff. and a mask of the coloured p_values are applied.
-    green_entries = np.where(p_value_mask=='#3CAEA3', p_value_mask, "None")
-    ax.plot_surface(X,Y,np.zeros_like(median_diff_edge_array), rstride=1, cstride=1, facecolors=green_entries)
-    
-    all_not_green_entries = np.where(p_value_mask=='#3CAEA3', "None", p_value_mask)
-    ax.plot_surface(X,Y,median_diff_edge_array, rstride=1, cstride=1, facecolors=all_not_green_entries)
+    ax.plot_surface(X,Y,np.zeros_like(median_diff_edge_array), rstride=1, cstride=1, facecolors=first_colour_entries)
+    ax.plot_surface(X,Y,median_diff_edge_array, rstride=1, cstride=1, facecolors=all_non_first_colour_entries)
 
     # Removes x, y and z ticks and sets z limit.
     ax.set_xticklabels([])

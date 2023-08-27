@@ -9,12 +9,13 @@ from scipy import stats
 from tqdm import tqdm
 from concurrent.futures import ProcessPoolExecutor
 
-def threshold(list_of_pixel_values):
+def threshold(list_of_pixel_values, threshold_value=2.5):
     """
     Checks the list and returns it if there are no outliers, otherwise, returns an empty list.
 
     Args:
-        list_of_pixel_values (list): List of pixel values at a specfic coordinate of a list of images.
+        list_of_pixel_values : List of pixel values at a specfic coordinate of a list of images.
+        threshold_value : threshold for COV, defaults to 2.5 as this was found to be suitable based off of our data set
     Returns:
         If no outliers, returns a list of pixel values, otherwise returns an empty list.
     """
@@ -23,7 +24,7 @@ def threshold(list_of_pixel_values):
         sdev = np.std(list_of_pixel_values)
         mean = np.mean(list_of_pixel_values)
         co_of_var = sdev/mean
-        if co_of_var < 2.5:
+        if co_of_var < threshold_value:
             return list_of_pixel_values
         else:
             return []
@@ -64,7 +65,7 @@ def total_significant_values(p_value_mask, median_diff_array):
     Returns:
         tuple: Percentage of WT and MT significance.
     """
-
+    # Colours were chosen to be colour blind friendly and easily distinguishable.
     wt_color = '#ED553B'
     mt_color = '#F6D55C'
 
@@ -80,53 +81,60 @@ def total_significant_values(p_value_mask, median_diff_array):
 
     return round(wt_sig_percentage, 2), round(mt_sig_percentage, 2)
 
-def process_chunk(chunk,wt_sig_colour, mt_sig_colour):
-    """Processes a chunk of the image and returns the results.
+def process_chunk(chunk):
+    """
+    Processes a chunk of the image and returns the results.
 
     Args:
-        chunk (tuple): A tuple containing y_start, y_end, image_width, wt_files_chunk, and mt_files_chunk.
+        chunk : A tuple containing y_start, y_end, image_width, wt_files_chunk, and mt_files_chunk.
     Returns:
-        tuple: Results of the processing for the chunk.
+        tuple : Results of the processing for the chunk.
     """
-
+    # Colours were chosen to be colour blind friendly and easily distinguishable.
+    wt_sig_color = '#ED553B'
+    mt_sig_color = '#F6D55C'
+    
+    # Unpacks chunk variable
     y_start, y_end, image_width, wt_files_chunk, mt_files_chunk = chunk
 
+    # Intialise arrays
     mt_median_image_chunk = [[nan for _ in range(image_width)] for _ in range(y_start, y_end)]
     wt_median_image_chunk = [[nan for _ in range(image_width)] for _ in range(y_start, y_end)]
     median_diff_array_chunk = [[nan for _ in range(image_width)] for _ in range(y_start, y_end)]
     p_value_mask_array_chunk = np.array([['None' for _ in range(image_width)] for _ in range(y_start, y_end)], dtype=object)
    
-
+    # Scans the image
     for current_y_axis in range(y_start, y_end):
         for current_x_axis in range(image_width):
             #returns a list of values at the current x and y coordinate for either the wt or mt images. 
             wt_image_pixels = get_pixel_values_from_image_array(current_x_axis, current_y_axis, wt_files_chunk)
             mt_image_pixels = get_pixel_values_from_image_array(current_x_axis, current_y_axis, mt_files_chunk)
 
+            # Removes outliers
             wt_image_pixels = threshold(wt_image_pixels)
             mt_image_pixels = threshold(mt_image_pixels)
 
+            # Calculates median and appends to genotype specific median list only if list contains more than 1 non_nan value.
             if len(wt_image_pixels) >=2:
                 median_wt = np.median(wt_image_pixels)
                 wt_median_image_chunk[current_y_axis - y_start][current_x_axis] = median_wt
             else:
                 wt_median_image_chunk[current_y_axis - y_start][current_x_axis] = nan
-
             if len(mt_image_pixels) >=2:
                 median_mt = np.median(mt_image_pixels)
                 mt_median_image_chunk[current_y_axis - y_start][current_x_axis] = median_mt
             else:
                 mt_median_image_chunk[current_y_axis - y_start][current_x_axis] = nan
 
+            # If both lists contain more than 1 non_nan_value at the same coord, it calculates the var_checked_p_value
             if len(mt_image_pixels) >=2 and len(wt_image_pixels) >=2:
-
                 median_diff_array_chunk[current_y_axis - y_start][current_x_axis] = median_mt - median_wt
                 p_value, name_of_higher_mean_embryos = var_checked_p_value(wt_image_pixels, mt_image_pixels)
-                if p_value <= 0.05:
+                if p_value <= 0.05: # 95% confidence level
                     if name_of_higher_mean_embryos == 'wt_mean':
-                        p_value_mask_array_chunk[current_y_axis - y_start][current_x_axis] = '#ED553B'
+                        p_value_mask_array_chunk[current_y_axis - y_start][current_x_axis] = wt_sig_color
                     else:
-                        p_value_mask_array_chunk[current_y_axis - y_start][current_x_axis] = '#F6D55C'
+                        p_value_mask_array_chunk[current_y_axis - y_start][current_x_axis] = mt_sig_color
             else:
                 median_diff_array_chunk[current_y_axis - y_start][current_x_axis] = nan
     
@@ -146,7 +154,7 @@ def scan_image_and_process(wt_files, mt_files):
     # Get image dimensions
     image_width, image_height = image_dimensions(wt_files)
 
-    # Create chunks
+    # Seperates image into chunks, to utilise multi-prcoessing
     chunk_size = 41
     chunks = [(y, min(y + chunk_size, image_height), image_width, wt_files, mt_files) for y in range(0, image_height, chunk_size)]
 
@@ -154,7 +162,7 @@ def scan_image_and_process(wt_files, mt_files):
     with ProcessPoolExecutor() as executor:
         results = list(tqdm(executor.map(process_chunk, chunks), total=len(chunks)))
 
-    # Merge results from chunks
+    # Stacks the seperated chunks to recreate the same dimensions and location values as the original image
     median_diff_array_list, p_value_mask_array_list, mt_median_image_list, wt_median_image_list = zip(*results)
     median_diff_array = np.vstack(median_diff_array_list)
     p_value_mask_array = np.vstack(p_value_mask_array_list)
@@ -208,28 +216,24 @@ def find_and_add_edge(median_diff_array, p_value_mask, edge_line_width, edge_col
 
             continue
 
-        # Right edge
+        # Paint right edge
         if first_y_axis_line == False:
             p_value_mask[y_axis,right_edge:max(previous_first_right_value_index, first_right_value_index)] = edge_colour
 
-        # Left edge
-        if first_left_value_index >= left_index_of_first_line and y_axis < 1000:
+        # Paint left edge
+        if first_left_value_index >= left_index_of_first_line:
             p_value_mask[y_axis,min(previous_first_left_value_index, first_left_value_index):left_edge] = edge_colour
 
-        # Embryo close to right border of image
+        # Accounts for if the embryo is close to the right border of the image
         if first_right_value_index <= edge_line_width:
             p_value_mask[y_axis,0:edge_line_width] = edge_colour
 
         previous_first_right_value_index = first_right_value_index
         previous_first_left_value_index = first_left_value_index
-
-    # Hack to deal with weird green values inside embryo:
-    # replace the p value mask where it is green with nan for the problematic region
-    p_value_mask[300:600, 300:500] = np.where(p_value_mask[300:600, 300:500]==edge_colour, "None", p_value_mask[300:600, 300:500])
     
-    # draw bottom line
-    bottom_line = 1796
-    bottom_offset = 3
-    p_value_mask[bottom_line:bottom_line+bottom_offset,previous_first_right_value_index:499] = edge_colour
+    # Draw bottom line
+    bottom_line = image_height - edge_line_width
+    bottom_offset = edge_line_width
+    p_value_mask[bottom_line:bottom_line+bottom_offset,previous_first_right_value_index:image_height-1] = edge_colour
 
     return p_value_mask, median_diff_array
