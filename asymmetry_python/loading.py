@@ -28,6 +28,7 @@ def read_and_sort_files(folder_path):
 
     try:
         for file_path in listdir(folder_path):
+            # Remove hidden folder from Mac
             if file_path == '.DS_Store':
                 continue
             pbar.update(1)

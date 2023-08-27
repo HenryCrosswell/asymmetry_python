@@ -14,10 +14,11 @@ def threshold(list_of_pixel_values):
     Checks the list and returns it if there are no outliers, otherwise, returns an empty list.
 
     Args:
-        list_of_pixel_values (list): List of pixel values.
+        list_of_pixel_values (list): List of pixel values at a specfic coordinate of a list of images.
     Returns:
-        list: List of pixel values if no outliers, otherwise an empty list.
+        If no outliers, returns a list of pixel values, otherwise returns an empty list.
     """
+
     if len(list_of_pixel_values) != 0 or not np.all(np.isnan(list_of_pixel_values)):
         sdev = np.std(list_of_pixel_values)
         mean = np.mean(list_of_pixel_values)
@@ -58,8 +59,8 @@ def total_significant_values(p_value_mask, median_diff_array):
     """Calculates percentage of WT and MT significance as a percentage of area.
 
     Args:
-        p_value_mask (ndarray): P-value mask array.
-        median_diff_array (ndarray): Median difference array.
+        p_value_mask : P-value mask array.
+        median_diff_array : Median difference array.
     Returns:
         tuple: Percentage of WT and MT significance.
     """

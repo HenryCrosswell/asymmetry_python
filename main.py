@@ -1,12 +1,11 @@
 """
 Main script in which you pick a folder containing pre-labelled, same size images. 
 """
-from plotting import create_plots
-from loading import read_and_sort_files
-from processing import scan_image_and_process, total_significant_values
+from asymmetry_python.plotting import create_plots
+from asymmetry_python.loading import read_and_sort_files
+from asymmetry_python.processing import scan_image_and_process, total_significant_values
 import time 
 from tqdm import tqdm
-from pathlib import Path
 from multiprocessing import freeze_support
 import warnings
 import logging
@@ -15,7 +14,7 @@ import os
 
 if __name__ == '__main__':
     freeze_support()
-    logging.basicConfig(filename='log_file.txt', level=logging.ERROR)
+    logging.basicConfig(filename='asymmetry_python/log_file.txt', level=logging.ERROR, format='%(asctime)s - %(levelname)s - %(message)s')
     start_time = time.time()
     script_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -23,12 +22,12 @@ if __name__ == '__main__':
     try:
         print('Select the folder containing your pre-processed images... ')
         # folder_path = filedialog.askdirectory(title="Select folder containing images")
-        folder_path = os.path.join(script_dir, 'tests/data')
+        folder_path = os.path.join(script_dir, 'asymmetry_python/tests/data')
         print(f"Selected folder: {folder_path}")
 
         print('Select the folder where you would like to output the plots... ')
         # file_save_path = filedialog.askdirectory(title="Select folder for results")
-        file_save_path = os.path.join(script_dir, 'tests/test_save')
+        file_save_path = os.path.join(script_dir, 'asymmetry_python/tests/test_save')
         print(f"Selected folder to save results in : {file_save_path}")
 
     except FileNotFoundError as e:
@@ -39,7 +38,6 @@ if __name__ == '__main__':
 
     # This function requires images to be named correctly, wild-type images prefixed with WT.
     wt_files_list, mt_files_list = read_and_sort_files(folder_path)
-    print(wt_files_list, mt_files_list)
 
     with warnings.catch_warnings():
         median_diff_array, p_value_mask_array, mt_median_image, wt_median_image = scan_image_and_process(wt_files_list, mt_files_list)
@@ -58,11 +56,13 @@ if __name__ == '__main__':
         for number, (azimuth, elevation) in azimuth_elevation_mapping.items():
             pbar.update(2)
             logging.info(f'Creating plots, viewed at azimuth : {azimuth} and elevation : {elevation}...')
-            create_plots(median_diff_array, p_value_mask_array, mt_median_image, wt_median_image, file_save_path, elevation, azimuth)
+
+            # 300 dpi was chosen as it is a standard for printed images.
+            create_plots(median_diff_array, p_value_mask_array, mt_median_image, wt_median_image, file_save_path, elevation, azimuth, 300)
 
     logging.info(
-    f'WT significance - {wt_sig_percentage:.2f}%, '
-    f'MT significance - {mt_sig_percentage:.2f}%, '
-    f'Figures successfully saved in - {file_save_path}, '
+    f'WT significance - {wt_sig_percentage:.2f}%, /n'
+    f'MT significance - {mt_sig_percentage:.2f}%, /n'
+    f'Figures successfully saved in - {file_save_path}, /n'
     f'---- {time.time()-start_time:.2f} seconds ----'
     )

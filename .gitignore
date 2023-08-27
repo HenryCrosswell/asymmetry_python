@@ -40,6 +40,4 @@ docs/_build
 output/
 
 # Images
-
-# Mac files
-.DS_store
+*.png
