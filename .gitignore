@@ -43,4 +43,4 @@ output/
 *.png
 
 # Settings
-*.vscode
+.vscode
