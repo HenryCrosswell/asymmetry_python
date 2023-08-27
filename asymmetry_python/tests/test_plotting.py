@@ -27,7 +27,7 @@ def test_create_plots():
     dpi = 300
     
     # Call the create_plots function
-    create_plots(median_diff_array, p_value_mask_array, mt_median_image, wt_median_image, file_save_path, elevation, azimuth, dpi)
+    create_plots(median_diff_array, p_value_mask_array, mt_median_image, wt_median_image, file_save_path, elevation, azimuth, dpi, '#3CAEA3', edge_line_width= 5)
 
 def test_plot3Dp_values():
     median_diff_array = np.random.rand(10, 10)
@@ -35,7 +35,7 @@ def test_plot3Dp_values():
     elevation = 30
     azimuth = 45
     
-    plot3Dp_values(median_diff_array, p_value_mask_array, elevation, azimuth)
+    plot3Dp_values(median_diff_array, p_value_mask_array, elevation, azimuth, '#3CAEA3', edge_line_width= 5)
     # No assertions here as this function involves visual inspection.
 
     
