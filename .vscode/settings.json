@@ -1,8 +1,9 @@
 {
-    "python.testing.pytestArgs": [
-        "tests"
-    ],
-    "python.testing.unittestEnabled": false,
     "python.testing.pytestEnabled": true,
-    "python.envFile": "${workspaceFolder}/.env"
+    "python.testing.pytestPath": "//Users/henry/anaconda3/envs/asymmetry/Scripts/pytest",
+    "python.testing.unittestEnabled": false,
+    "python.testing.cwd": "${workspaceFolder}",
+    "python.testing.pytestArgs": [
+        "asymmetry_python/tests"
+    ],
 }
