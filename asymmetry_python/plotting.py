@@ -10,14 +10,14 @@ import matplotlib as mpl
 from asymmetry_python.processing import find_and_add_edge
 import os
 
-def custom_gaussian_filter(image_array, sigma, truncate):
+def custom_gaussian_filter(image_array, sigma = 4, truncate = 4):
     """
     Filters a given array excluding nan values more effectively than the normal gaussian function.
 
     Args:
         image_array : The chosen image array that will undergo filtering.
-        sigma : The range at which the filter averages the values.
-        truncate : The decimal places at which the average is cut off.
+        sigma : The range at which the filter averages the values, default to 4.
+        truncate : The decimal places at which the average is cut off, default to 4.
 
     Returns:
         image_array with guassian filter applied.
@@ -40,6 +40,8 @@ def custom_gaussian_filter(image_array, sigma, truncate):
 
     # Divide the filtered array by the Gaussian-filtered non-zero count array
     combination_of_arrays = gaussian_filter_of_original_array / gaussian_filter_of_non_zero_array
+
+    print(combination_of_arrays)
     
     return combination_of_arrays
 
@@ -91,7 +93,6 @@ def plot3Dp_values(median_diff_array, p_value_mask, elevation, azimuth):
     image_width = len(median_diff_array[0])
 
     median_diff_array = custom_gaussian_filter(median_diff_array, 4,4)
-    print(median_diff_array)
     p_value_mask, median_diff_edge_array = find_and_add_edge(median_diff_array,  p_value_mask, 5, '#3CAEA3')
 
     # Creates the skeleton of figure, in which we will add plots.
