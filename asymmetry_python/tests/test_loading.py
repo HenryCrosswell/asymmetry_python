@@ -11,7 +11,6 @@ def test_image_dimensions():
 
 def test_read_and_sort_files():
     test_folder_path = Path(__file__).parent / "data"
-    print(test_folder_path)
     wt_list, mt_list = read_and_sort_files(test_folder_path)
     wt_list, mt_list = read_and_sort_files(test_folder_path)
     assert len(mt_list) == 2

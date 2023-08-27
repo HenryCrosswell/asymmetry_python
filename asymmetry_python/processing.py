@@ -223,7 +223,7 @@ def find_and_add_edge(median_diff_array, p_value_mask, line_width, colour):
         previous_first_right_value_index = first_right_value_index
         previous_first_left_value_index = first_left_value_index
 
-    # hack to deal with weird green values inside embryo:
+    # Hack to deal with weird green values inside embryo:
     # replace the p value mask where it is green with nan for the problematic region
     p_value_mask[300:600, 300:500] = np.where(p_value_mask[300:600, 300:500]==colour, "None", p_value_mask[300:600, 300:500])
     

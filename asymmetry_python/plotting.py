@@ -47,7 +47,9 @@ def custom_gaussian_filter(image_array, sigma = 4, truncate = 4):
 
 
 
-def create_plots(median_diff_array, p_value_mask_array, mt_median_image, wt_median_image, file_save_path, elevation, azimuth, dpi):
+def create_plots(
+        median_diff_array, p_value_mask_array, mt_median_image, wt_median_image, 
+        file_save_path, elevation, azimuth, dpi, edge_colour, edge_line_width):
     """
     From four different 2D arrays this function creates two 3D plots, edited by some parameters.
     One of the significant P_values masking the the median_diff_array, showing signficance where WT is compared with MT, 
@@ -60,49 +62,53 @@ def create_plots(median_diff_array, p_value_mask_array, mt_median_image, wt_medi
         mt_median_image : 2D array of the MT values.
         wt_median_image : 2D array of the WT values.
         file_save_path : Location for resulting graphs to be saved.
-        elevation : This value represents the vertical rotation of the saved image.
-        azimuth : This value represents the horizontal rotation of the saved image.
+        elevation : This value represents the vertical rotation of the viewed and saved image.
+        azimuth : This value represents the horizontal rotation of the viewed and saved image.
         dpi : dots per inch - a measure of the images' quality.
 
     Returns:
-        p_value_plot : 3D plot of the median diff array with areas highlighted to display genotypes significant tissue asymmetry
-        median_plot : 3D plot of MT and WT surface plots, displaying the difference in shape of the average PNP, between WT and MT
+        p_value_plot : 3D plot of the median diff array with areas highlighted to display genotypes significant tissue asymmetry.
+        median_plot : 3D plot of MT and WT surface plots, displaying the difference in shape of the average PNP, between WT and MT.
     """
 
-    plot3Dp_values(median_diff_array, p_value_mask_array, elevation, azimuth)
+    plot3Dp_values(median_diff_array, p_value_mask_array, elevation, azimuth, edge_colour, edge_line_width)
     plt.savefig(os.path.join(file_save_path, f'p_value_plot_a{azimuth}_e{elevation}.png'), dpi=dpi)
 
     plot3Dmedians(wt_median_image, mt_median_image, elevation, azimuth)
     plt.savefig(os.path.join(file_save_path, f'median_plot_a{azimuth}_e{elevation}.png'), dpi=dpi)
 
 
-def plot3Dp_values(median_diff_array, p_value_mask, elevation, azimuth):
+def plot3Dp_values(median_diff_array, p_value_mask, elevation, azimuth, edge_colour, edge_line_width = 5):
     """
     Surface plots the difference in median values onto an X,Y,Z axis, smooths the image and extends the Y axis to a representitive size. 
     Following this, applys either a Red mask if the P_value for the mutant is significant, or a Blue mask if the wild-type is significant.
     
     Keyword arguments:
-    median_diff_array -- a 2D array, containing the difference in median values between indivual pixels for the mutant images and wild-type.
-    p_value_mask -- a 2D array, containing colour-coordinated strings in which significant mutant and WT P_values are coloured differently to non-sig values.
-    elevation -- an int determining the height at which the graph is viewed
-    azimuth -- an int specifiying the rotation of the final graph
+    median_diff_array : A 2D array, containing the difference in median values between indivual pixels for the mutant images and wild-type.
+    p_value_mask : A 2D array, containing colour-coordinated strings in which significant mutant and WT P_values are coloured differently to non-sig values.
+    elevation : This value represents the vertical rotation of the viewed image.
+    azimuth : This value represents the horizontal rotation of the viewed image.
+    edge_colour : Chosen colour for the line drawn around the edge of the average PNPs.
+    edge_line_width: Thickness of line drawn, defualt 5px.
     """
 
     # Applys a gaussian filter to the inputed 2D arrays - also finds the edge and applys that to the image.
     image_height = len(median_diff_array)
     image_width = len(median_diff_array[0])
 
-    median_diff_array = custom_gaussian_filter(median_diff_array, 4,4)
-    p_value_mask, median_diff_edge_array = find_and_add_edge(median_diff_array,  p_value_mask, 5, '#3CAEA3')
+    # Using default settings as it helps smooth without creating new data when using large images.
+    median_diff_array = custom_gaussian_filter(median_diff_array)
+    p_value_mask, median_diff_edge_array = find_and_add_edge(median_diff_array,  p_value_mask, edge_line_width, edge_colour)
 
     # Creates the skeleton of figure, in which we will add plots.
+    # figsize was chosen to be a large window, allowing easy viewing.
     fig, ax = plt.subplots(subplot_kw={"projection": "3d"}, figsize=(8,6))
     ax.set(xlim=(0, image_width), ylim=(0, image_height))
     X, Y = np.meshgrid(range(image_width), range(image_height))
     ax.set_aspect('auto')
     plt.rcParams.update({'font.family':'Calibri'})
 
-    # Stretches plot along the Y axis - makes it more representative.
+    # Stretches plot along the Y axis by a determined scale factor - makes it more representative.
     ax.get_proj = lambda: np.dot(Axes3D.get_proj(ax), np.diag([0.4, 1.0, 0.4, 1]))
 
     # Fills the skeleton with a surface plot, with the Z axis being the med. diff. and a mask of the coloured p_values are applied.
