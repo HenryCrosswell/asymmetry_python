@@ -1,6 +1,7 @@
 from cmath import nan
 import numpy as np
 from ..plotting import custom_gaussian_filter, create_plots, plot3Dmedians, plot3Dp_values
+from pathlib import Path
 
 def test_gaussian_filter():
     image_array = np.array([[nan,nan,nan,nan,nan,nan],
@@ -19,7 +20,7 @@ def test_create_plots():
     p_value_mask_array = np.random.choice(['#3CAEA3', '#ED553B'], (10, 10))
     mt_median_image = np.random.rand(10, 10)
     wt_median_image = np.random.rand(10, 10) 
-    file_save_path = "asymmetry_python/tests/test_save/"
+    file_save_path = Path(__file__).parent / 'test_save'
     elevation = 30
     azimuth = 45
     dpi = 300
