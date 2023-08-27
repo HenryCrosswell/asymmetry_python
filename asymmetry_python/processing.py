@@ -45,7 +45,7 @@ def var_checked_p_value(wt_pixels, mt_pixels):
         wt_pixels : A list of pixel values at a specific coordinate from the WT images.
         mt_pixels : A list of pixel values at a specific coordinate from the MT images.
     Returns:
-        tuple: P_value and name_of_higher_mean_embryos.
+        tuple: A list of P_values and name_of_higher_mean_embryos.
     """
 
     wt_mean = np.mean(wt_pixels)
@@ -54,13 +54,11 @@ def var_checked_p_value(wt_pixels, mt_pixels):
     name_of_higher_mean_embryos = 'wt_mean' if wt_mean >= mt_mean else 'mt_mean'
 
     # Check variance using Levene's test
-    try:
+    if wt_mean != mt_mean and np.var(wt_pixels) != np.var(mt_pixels):
         _, unchecked_p_value = stats.levene(wt_pixels, mt_pixels)
         variance = unchecked_p_value >= 0.05
-    except RuntimeWarning as e:
-        logging.warning(f"RuntimeWarning encountered with values {wt_pixels, mt_pixels} : {e}")
-        # Assume equal variance if Levene's test fails
-        variance = True  
+    else:
+        variance = True # Variance is assumed to be equal 
 
     # Perform t-test with or without equal variance assumption
     ttest_args = {'equal_var': variance}
@@ -133,6 +131,7 @@ def process_chunk(chunk):
                 wt_median_image_chunk[current_y_axis - y_start][current_x_axis] = median_wt
             else:
                 wt_median_image_chunk[current_y_axis - y_start][current_x_axis] = nan
+
             if len(mt_image_pixels) >=2:
                 median_mt = np.median(mt_image_pixels)
                 mt_median_image_chunk[current_y_axis - y_start][current_x_axis] = median_mt
@@ -150,7 +149,7 @@ def process_chunk(chunk):
                         p_value_mask_array_chunk[current_y_axis - y_start][current_x_axis] = mt_sig_color
             else:
                 median_diff_array_chunk[current_y_axis - y_start][current_x_axis] = nan
-    
+            
     return median_diff_array_chunk, p_value_mask_array_chunk, mt_median_image_chunk, wt_median_image_chunk
 
 def scan_image_and_process(wt_files, mt_files):

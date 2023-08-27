@@ -9,8 +9,10 @@ from scipy.ndimage import gaussian_filter
 import matplotlib as mpl
 from asymmetry_python.processing import find_and_add_edge
 import os
+from cmath import nan
+import logging
 
-def custom_gaussian_filter(image_array, sigma = 4, truncate = 4):
+def custom_gaussian_filter(image_array, sigma = 2, truncate = 4):
     """
     Filters a given array excluding nan values more effectively than the normal gaussian function.
 
@@ -22,8 +24,7 @@ def custom_gaussian_filter(image_array, sigma = 4, truncate = 4):
     Returns:
         image_array with guassian filter applied.
     """
-
-    # Create a copy of the input array and replace NaN values with zeros
+    placeholder_value = 1e-10
     image_np_array = np.array(image_array)
     copy_of_np_array = image_np_array.copy()
     copy_of_np_array[np.isnan(image_np_array)] = 0
@@ -38,10 +39,15 @@ def custom_gaussian_filter(image_array, sigma = 4, truncate = 4):
     # Apply Gaussian filter to the mask to count non-NaN values
     gaussian_filter_of_non_zero_array = gaussian_filter(non_zero_np_array, sigma=sigma, truncate=truncate)
 
+    # Replace zeros in the Gaussian-filtered non-zero count array with a small non-zero placeholder value, to prevent /0
+    gaussian_filter_of_non_zero_array[gaussian_filter_of_non_zero_array == 0] = placeholder_value
+
     # Divide the filtered array by the Gaussian-filtered non-zero count array
     combination_of_arrays = gaussian_filter_of_original_array / gaussian_filter_of_non_zero_array
-    
+    combination_of_arrays[combination_of_arrays == 0.0] = nan
+
     return combination_of_arrays
+
 
 def create_plots(
         median_diff_array, p_value_mask_array, mt_median_image, wt_median_image, 
