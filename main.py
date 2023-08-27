@@ -14,7 +14,7 @@ import os
 
 if __name__ == '__main__':
     freeze_support()
-    logging.basicConfig(filename='asymmetry/log_file.txt', level=logging.ERROR, format='%(asctime)s - %(levelname)s - %(message)s')
+    logging.basicConfig(filename='asymmetry_python/log_file.txt', level=logging.ERROR, format='%(asctime)s - %(levelname)s - %(message)s')
     start_time = time.time()
     script_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -56,11 +56,13 @@ if __name__ == '__main__':
         for number, (azimuth, elevation) in azimuth_elevation_mapping.items():
             pbar.update(2)
             logging.info(f'Creating plots, viewed at azimuth : {azimuth} and elevation : {elevation}...')
-            create_plots(median_diff_array, p_value_mask_array, mt_median_image, wt_median_image, file_save_path, elevation, azimuth)
+
+            # 300 dpi was chosen as it is a standard for printed images.
+            create_plots(median_diff_array, p_value_mask_array, mt_median_image, wt_median_image, file_save_path, elevation, azimuth, 300)
 
     logging.info(
-    f'WT significance - {wt_sig_percentage:.2f}%, '
-    f'MT significance - {mt_sig_percentage:.2f}%, '
-    f'Figures successfully saved in - {file_save_path}, '
+    f'WT significance - {wt_sig_percentage:.2f}%, /n'
+    f'MT significance - {mt_sig_percentage:.2f}%, /n'
+    f'Figures successfully saved in - {file_save_path}, /n'
     f'---- {time.time()-start_time:.2f} seconds ----'
     )
