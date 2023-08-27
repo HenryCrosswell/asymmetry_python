@@ -80,7 +80,7 @@ def total_significant_values(p_value_mask, median_diff_array):
 
     return round(wt_sig_percentage, 2), round(mt_sig_percentage, 2)
 
-def process_chunk(chunk):
+def process_chunk(chunk,wt_sig_colour, mt_sig_colour):
     """Processes a chunk of the image and returns the results.
 
     Args:
@@ -164,17 +164,17 @@ def scan_image_and_process(wt_files, mt_files):
     return median_diff_array, p_value_mask_array, mt_median_image, wt_median_image
 
 
-def find_and_add_edge(median_diff_array, p_value_mask, line_width, colour):
+def find_and_add_edge(median_diff_array, p_value_mask, edge_line_width, edge_colour):
     """
     Compares the median difference array against the p value mask, finds the first non-zero value
-    and replaces the value added with "line_width" with either a colour or a value, depending on the array type.
+    and replaces the value added with "edge_line_width" with either a colour or a value, depending on the array type.
     Returns the same arrays, but with a highlighted edge.
 
     Args:
         median_diff_array : Filtered median difference array.
         p_value_mask : Coloured mask for median difference array, with p-values coloured depending on WT or MT.
-        line_width : Size of edge.
-        colour : Colour of edge.
+        edge_line_width : Size of edge in pixels.
+        edge_colour : Colour of edge.
     Returns:
         tuple: Updated p_value_mask and median_diff_array.
     """
@@ -193,15 +193,15 @@ def find_and_add_edge(median_diff_array, p_value_mask, line_width, colour):
 
         first_left_value_index = non_nan_indices[0][-1]
         first_right_value_index = non_nan_indices[0][0]
-        left_edge = first_left_value_index + line_width
-        right_edge = first_right_value_index - line_width 
+        left_edge = first_left_value_index + edge_line_width
+        right_edge = first_right_value_index - edge_line_width 
 
         # If this y-axis is the first to contain a non_nan_index, it paints the first line.
         if first_y_axis_line == True:
             first_y_axis_line = False
 
             left_index_of_first_line = first_left_value_index
-            p_value_mask[y_axis,right_edge:left_edge] = colour
+            p_value_mask[y_axis,right_edge:left_edge] = edge_colour
 
             previous_first_right_value_index = first_right_value_index
             previous_first_left_value_index = first_left_value_index
@@ -210,26 +210,26 @@ def find_and_add_edge(median_diff_array, p_value_mask, line_width, colour):
 
         # Right edge
         if first_y_axis_line == False:
-            p_value_mask[y_axis,right_edge:max(previous_first_right_value_index, first_right_value_index)] = colour
+            p_value_mask[y_axis,right_edge:max(previous_first_right_value_index, first_right_value_index)] = edge_colour
 
         # Left edge
         if first_left_value_index >= left_index_of_first_line and y_axis < 1000:
-            p_value_mask[y_axis,min(previous_first_left_value_index, first_left_value_index):left_edge] = colour
+            p_value_mask[y_axis,min(previous_first_left_value_index, first_left_value_index):left_edge] = edge_colour
 
         # Embryo close to right border of image
-        if first_right_value_index <= line_width:
-            p_value_mask[y_axis,0:line_width] = colour
+        if first_right_value_index <= edge_line_width:
+            p_value_mask[y_axis,0:edge_line_width] = edge_colour
 
         previous_first_right_value_index = first_right_value_index
         previous_first_left_value_index = first_left_value_index
 
     # Hack to deal with weird green values inside embryo:
     # replace the p value mask where it is green with nan for the problematic region
-    p_value_mask[300:600, 300:500] = np.where(p_value_mask[300:600, 300:500]==colour, "None", p_value_mask[300:600, 300:500])
+    p_value_mask[300:600, 300:500] = np.where(p_value_mask[300:600, 300:500]==edge_colour, "None", p_value_mask[300:600, 300:500])
     
     # draw bottom line
     bottom_line = 1796
     bottom_offset = 3
-    p_value_mask[bottom_line:bottom_line+bottom_offset,previous_first_right_value_index:499] = colour
+    p_value_mask[bottom_line:bottom_line+bottom_offset,previous_first_right_value_index:499] = edge_colour
 
     return p_value_mask, median_diff_array
