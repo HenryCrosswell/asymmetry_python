@@ -38,6 +38,3 @@ docs/_build
 
 # Cookiecutter
 output/
-
-# Images
-*.png
