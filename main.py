@@ -1,6 +1,7 @@
 """
 Main script in which you pick a folder containing pre-labelled, same size images. 
 """
+
 from asymmetry_python.plotting import create_plots
 from asymmetry_python.loading import read_and_sort_files
 from asymmetry_python.processing import scan_image_and_process, total_significant_values
@@ -14,7 +15,7 @@ import os
 
 if __name__ == '__main__':
     freeze_support()
-    logging.basicConfig(filename='asymmetry_python/log_file.txt', level=logging.ERROR, format='%(asctime)s - %(levelname)s - %(message)s')
+    logging.basicConfig(filename='asymmetry_python/log_file.txt', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
     start_time = time.time()
     script_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -58,11 +59,12 @@ if __name__ == '__main__':
             logging.info(f'Creating plots, viewed at azimuth : {azimuth} and elevation : {elevation}...')
 
             # 300 dpi was chosen as it is a standard for printed images.
-            create_plots(median_diff_array, p_value_mask_array, mt_median_image, wt_median_image, file_save_path, elevation, azimuth, 300)
+            create_plots(median_diff_array, p_value_mask_array, mt_median_image, wt_median_image, 
+        file_save_path, elevation, azimuth, 300, '#3CAEA3', edge_line_width = 5)
 
     logging.info(
-    f'WT significance - {wt_sig_percentage:.2f}%, /n'
-    f'MT significance - {mt_sig_percentage:.2f}%, /n'
-    f'Figures successfully saved in - {file_save_path}, /n'
+    f'WT significance - {wt_sig_percentage:.2f}%\n'
+    f'MT significance - {mt_sig_percentage:.2f}%\n'
+    f'Figures successfully saved in - {file_save_path}\n'
     f'---- {time.time()-start_time:.2f} seconds ----'
     )
