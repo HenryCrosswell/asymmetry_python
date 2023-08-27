@@ -105,10 +105,11 @@ def test_find_and_add_edge():
                               ['None', '#3CAEA3', 'pval', 'pval', '#3CAEA3'],
                               ['None', '#3CAEA3', 'pval', 'pval', '#3CAEA3'],
                               ['None', '#3CAEA3', 'pval', 'pval', '#3CAEA3'],
-                              ['None', '#3CAEA3', 'pval', 'pval', '#3CAEA3']], dtype= 'U7')
+                              ['None', '#3CAEA3', '#3CAEA3', '#3CAEA3', '#3CAEA3']], dtype= 'U7')
 
     p_value_mask, median_diff_array = find_and_add_edge(median_diff_array,  p_value_mask, 1, '#3CAEA3')
 
+    print(p_value_mask)
     assert len(p_value_mask) == 6
     assert len(p_value_mask[0]) == 5
     assert len(median_diff_array) == 6
