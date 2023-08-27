@@ -8,6 +8,7 @@ import numpy as np
 from scipy import stats
 from tqdm import tqdm
 from concurrent.futures import ProcessPoolExecutor
+import logging
 
 def threshold(list_of_pixel_values, threshold_value=2.5):
     """
@@ -15,40 +16,51 @@ def threshold(list_of_pixel_values, threshold_value=2.5):
 
     Args:
         list_of_pixel_values : List of pixel values at a specfic coordinate of a list of images.
-        threshold_value : threshold for COV, defaults to 2.5 as this was found to be suitable based off of our data set
+        threshold_value : Threshold for COV, defaults to 2.5 as this was found to be suitable based off of our data set
     Returns:
         If no outliers, returns a list of pixel values, otherwise returns an empty list.
     """
 
-    if len(list_of_pixel_values) != 0 or not np.all(np.isnan(list_of_pixel_values)):
-        sdev = np.std(list_of_pixel_values)
-        mean = np.mean(list_of_pixel_values)
-        co_of_var = sdev/mean
-        if co_of_var < threshold_value:
-            return list_of_pixel_values
+    try:
+        if len(list_of_pixel_values) != 0 or not np.all(np.isnan(list_of_pixel_values)):
+            sdev = np.std(list_of_pixel_values)
+            mean = np.mean(list_of_pixel_values)
+            co_of_var = sdev/mean
+            if co_of_var < threshold_value:
+                return list_of_pixel_values
+            else:
+                return []
         else:
             return []
-    else:
-        return []
+    except RuntimeWarning as e:
+        logging.warning(f"RuntimeWarning encountered with values {list_of_pixel_values} : {e}")
+    except Exception as e:
+        logging.error(f"An error occurred: {e}")
 
 def var_checked_p_value(wt_pixels, mt_pixels):
     """Checks the distribution of wt_pixels and mt_pixels and returns the P_value from a ttest 
     in which the mean of the wt distribution is less than the MT.
 
     Args:
-        wt_pixels (list): A list of pixel values at a specific coordinate from the WT images.
-        mt_pixels (list): A list of pixel values at a specific coordinate from the MT images.
+        wt_pixels : A list of pixel values at a specific coordinate from the WT images.
+        mt_pixels : A list of pixel values at a specific coordinate from the MT images.
     Returns:
         tuple: P_value and name_of_higher_mean_embryos.
     """
+
     wt_mean = np.mean(wt_pixels)
     mt_mean = np.mean(mt_pixels)
 
     name_of_higher_mean_embryos = 'wt_mean' if wt_mean >= mt_mean else 'mt_mean'
 
     # Check variance using Levene's test
-    _, unchecked_p_value = stats.levene(wt_pixels, mt_pixels)
-    variance = unchecked_p_value >= 0.05
+    try:
+        _, unchecked_p_value = stats.levene(wt_pixels, mt_pixels)
+        variance = unchecked_p_value >= 0.05
+    except RuntimeWarning as e:
+        logging.warning(f"RuntimeWarning encountered with values {wt_pixels, mt_pixels} : {e}")
+        # Assume equal variance if Levene's test fails
+        variance = True  
 
     # Perform t-test with or without equal variance assumption
     ttest_args = {'equal_var': variance}
@@ -91,6 +103,7 @@ def process_chunk(chunk):
         tuple : Results of the processing for the chunk.
     """
     # Colours were chosen to be colour blind friendly and easily distinguishable.
+
     wt_sig_color = '#ED553B'
     mt_sig_color = '#F6D55C'
     
@@ -102,7 +115,7 @@ def process_chunk(chunk):
     wt_median_image_chunk = [[nan for _ in range(image_width)] for _ in range(y_start, y_end)]
     median_diff_array_chunk = [[nan for _ in range(image_width)] for _ in range(y_start, y_end)]
     p_value_mask_array_chunk = np.array([['None' for _ in range(image_width)] for _ in range(y_start, y_end)], dtype=object)
-   
+
     # Scans the image
     for current_y_axis in range(y_start, y_end):
         for current_x_axis in range(image_width):
