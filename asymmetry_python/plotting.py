@@ -22,28 +22,28 @@ def custom_gaussian_filter(image_array, sigma, truncate):
     Returns:
         image_array with guassian filter applied.
     """
-    # Create a mask of non-nan values
-    valid_mask = ~np.isnan(image_array)
+
+    # Create a copy of the input array and replace NaN values with zeros
+    image_np_array = np.array(image_array)
+    copy_of_np_array = image_np_array.copy()
+    copy_of_np_array[np.isnan(image_np_array)] = 0
     
-    # Create a copy of the input array and set nan values to zero
-    image_copy = np.array(image_array)
-    image_copy[np.isnan(image_array)] = 0
+    # Apply Gaussian filter to the copy of the array
+    gaussian_filter_of_original_array = gaussian_filter(copy_of_np_array, sigma=sigma, truncate=truncate)
+
+    # Create a mask of non-NaN values (1 for non-NaN, 0 for NaN)
+    non_zero_np_array = 0 * image_np_array.copy() + 1
+    non_zero_np_array[np.isnan(image_np_array)] = 0
     
-    # Apply Gaussian filter on the masked copy of the array
-    gaussian_filter_of_original_array = gaussian_filter(image_copy, sigma=sigma, truncate=truncate)
-    
-    # Apply Gaussian filter on the mask to get the count of non-nan values at each location
-    gaussian_filter_of_non_zero_array = gaussian_filter(valid_mask.astype(np.float32), sigma=sigma, truncate=truncate)
-    
-    # Avoid division by zero and apply the filter
-    combination_of_arrays = np.divide(
-            gaussian_filter_of_original_array, 
-            gaussian_filter_of_non_zero_array, 
-            out=np.zeros_like(image_array), 
-            where=gaussian_filter_of_non_zero_array != 0
-    )
+    # Apply Gaussian filter to the mask to count non-NaN values
+    gaussian_filter_of_non_zero_array = gaussian_filter(non_zero_np_array, sigma=sigma, truncate=truncate)
+
+    # Divide the filtered array by the Gaussian-filtered non-zero count array
+    combination_of_arrays = gaussian_filter_of_original_array / gaussian_filter_of_non_zero_array
     
     return combination_of_arrays
+
+
 
 def create_plots(median_diff_array, p_value_mask_array, mt_median_image, wt_median_image, file_save_path, elevation, azimuth, dpi):
     """
@@ -89,7 +89,9 @@ def plot3Dp_values(median_diff_array, p_value_mask, elevation, azimuth):
     # Applys a gaussian filter to the inputed 2D arrays - also finds the edge and applys that to the image.
     image_height = len(median_diff_array)
     image_width = len(median_diff_array[0])
+
     median_diff_array = custom_gaussian_filter(median_diff_array, 4,4)
+    print(median_diff_array)
     p_value_mask, median_diff_edge_array = find_and_add_edge(median_diff_array,  p_value_mask, 5, '#3CAEA3')
 
     # Creates the skeleton of figure, in which we will add plots.
@@ -108,7 +110,7 @@ def plot3Dp_values(median_diff_array, p_value_mask, elevation, azimuth):
     
     all_not_green_entries = np.where(p_value_mask=='#3CAEA3', "None", p_value_mask)
     ax.plot_surface(X,Y,median_diff_edge_array, rstride=1, cstride=1, facecolors=all_not_green_entries)
-    
+
     # Removes x, y and z ticks and sets z limit.
     ax.set_xticklabels([])
     ax.set_yticklabels([])
