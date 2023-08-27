@@ -21,6 +21,7 @@ def test_create_plots():
     mt_median_image = np.random.rand(10, 10)
     wt_median_image = np.random.rand(10, 10) 
     file_save_path = Path(__file__).parent / 'test_save'
+    print(file_save_path)
     elevation = 30
     azimuth = 45
     dpi = 300
