@@ -13,8 +13,8 @@ def test_read_and_sort_files():
     test_folder_path = Path(__file__).parent / "data"
     wt_list, mt_list = read_and_sort_files(test_folder_path)
     wt_list, mt_list = read_and_sort_files(test_folder_path)
-    assert len(mt_list) == 2
-    assert len(wt_list) == 2
+    assert len(mt_list) == 3
+    assert len(wt_list) == 3
 
     # wt images are edited for the first two pixels to be 252
     for im_array in wt_list: 

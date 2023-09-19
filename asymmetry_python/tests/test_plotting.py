@@ -10,6 +10,7 @@ def test_gaussian_filter():
                             [nan,nan,nan,1,nan,3],
                             [nan,nan,nan,4,2,nan]])
     altered_image = custom_gaussian_filter(image_array, 1, 1)
+    assert np.isnan(altered_image[1][1]) == True
     assert image_array.shape == altered_image.shape
     assert np.isnan(image_array).any() == True
 
